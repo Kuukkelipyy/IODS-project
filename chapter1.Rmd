@@ -9,5 +9,11 @@
 date()
 
 ```
-The text continues here.
+## Some thoughts
 
+I'm really excited to start this course.
+I expect to learn a lot of using R and Rstudio.
+
+## Link to GitHub
+Here is a link to my GitHub repository: 
+https://github.com/Kuukkelipyy/IODS-project
