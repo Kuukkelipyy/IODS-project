@@ -1,5 +1,5 @@
 
-# About the project
+# Chapter 1: Start me up!
 
 *Write a short description about the course and add a link to your GitHub repository here. This is an R Markdown (.Rmd) file so you should use R Markdown syntax.*
 
@@ -9,12 +9,12 @@
 date()
 
 ```
-## Some thoughts
+## 1.1 Some thoughts
 
 I'm really excited to start this course.
 I expect to learn a lot of using R and RStudio.
 
-## Link to GitHub
+## 1.2 Link to GitHub
 
 Here is a link to my GitHub repository: 
 https://github.com/Kuukkelipyy/IODS-project
