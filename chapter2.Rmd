@@ -9,9 +9,9 @@ date()
 
 - I began by reading the suggested chapters 3 and 4 from the book *Multivariate Analysis for the Behavioral Sciences*
 - While reading the book I also did the week's Datacamp exercises
-- During the week I also studied a little bit about RMarkdown, which can hopefully be seen in this Diary
-- After reading the chapters and completing the Datacamp exercises I started to work with the RStudio exercises, which are reported below
-- During the week I got hooked on R and Open science!
+- During the week I studied a little bit more about RMarkdown which can hopefully be seen in this diary
+- After reading the chapters and completing the Datacamp exercises I started to work with the RStudio exercises (which are reported below)
+- During the week I got more and more hooked (in linear fashion!) on R and Open science!
 
 ## 2.1 Data
 
@@ -27,7 +27,7 @@ dim(learning2014)
 
 ```
 
-After data wrangling, the data set utilized here consists of 166 observations of 7 variables (i.e. 166 rows and 7 columns), meaning that the data provides information from 166 respondents on seven variables. Deep, stra and surf are combination variables based on multiple questions measuring **surf**ace, **stra**tegic and deep learning. More information about the creating these variables see: [Information about creating new variabes](https://www.mv.helsinki.fi/home/kvehkala/JYTmooc/JYTOPKYS2-meta.txt). In the next subchapter I present an overview of the data and its variables.
+After data wrangling the data set utilized here consists of 166 observations of 7 variables (i.e. 166 rows and 7 columns), meaning that the data provides information from 166 respondents on seven variables. Deep, stra and surf are combination variables based on multiple questions measuring **surf**ace, **stra**tegic and deep learning (for more information about the variables see [here](https://www.mv.helsinki.fi/home/kvehkala/JYTmooc/JYTOPKYS2-meta.txt)). My code for the preparation of the data can be found in my [repository](https://github.com/Kuukkelipyy/IODS-project/blob/master/data/create_learning2014.R).Next, I'll present an overview of the data and its variables.
 
 ## 2.2 Overview of the data
 ```{r message=FALSE, warning=FALSE}
@@ -50,9 +50,9 @@ ggpairs(learning2014, lower = list(combo = wrap("facethist", bins = 20)))
 
 ```
 
-Above the summary tables show a summary of each variable in the data. Gender is a categorical ('character') variable, while the others are continuous ('numerical'). For numerical variables the summary provides information about their minimum, maximum and median values as well as lower (1st) and upper (3rd) quartiles of their distributions. As gender variable is a 'character', the summary shows only the number of total observations. When the variable is transformed to a factor, the summary function shows the number of female and male respondents.
+Above the summary tables show a summary of each variable in the data. Gender is a categorical ('character') variable, while the others are continuous ('numerical'). Regarding the numerical variables the summary provides information about their minimum, maximum and median values as well as lower (1st) and upper (3rd) quartiles of their distributions. As gender variable is a 'character', the summary shows only the number of total observations. When the variable is transformed to a factor, the summary function shows the number of female and male respondents.
 
-The graphical presentation of the distributions of all the variables can be seen in the scatter plot matrix. The scatter plot matrix also provides statistics about the correlation between the variables. Here I focus only on the last column of the scatter plot matrix which shows the correlation between 'points' and other continuous variables; the highest correlation coefficient is found between points and attitude (0.437), followed by variables stra (0.146) and surf (-0.144), while the correlation coefficient between points and age (-0.093) or points and deep (-0.010) are really low. According to the scatter plot only the correlation between points and attitude is statistically significant (p < 0.001). Also worth to notice, that there are statistically significant correlations between surf and attitude, surf and deep and surf and stra, indicating a potential problem of multicollinearity if those variables were used as explanatory variables in a linear regression model.
+The graphical presentation of the distributions of all the variables can be seen in the scatter plot matrix. The scatter plot matrix also provides statistics about the correlation between the variables. Here I focus only on the last column of the scatter plot matrix which shows the correlation between 'points' and other continuous variables; the highest correlation coefficient is found between points and attitude (0.437), followed by variables stra (0.146) and surf (-0.144), while the correlation coefficient between points and age (-0.093) or points and deep (-0.010) are really low. According to the scatter plot matrix only the correlation between points and attitude is statistically significant (p < 0.001). Also worth to notice, that there are statistically significant correlations between surf and attitude, surf and deep and surf and stra, indicating a potential problem of multicollinearity if those variables were used simultaneously as explanatory variables in a linear regression model.
 
 ## 2.3 Linear regression modelling
 
@@ -66,13 +66,13 @@ model1 <- lm(points ~ surf + stra + attitude, data = learning2014)
 summary(model1)
   
 ```
-The results of the multiple linear regression model are shown in the summary table above. F-statistic with low p-value (p < 0.001) indicates that the all the regression coefficients in the model are not zero, meaning that at least one of the variables included in the model has an actual statistical effect on the target variable (points). The multiple R-squared illustrates how well the model is fitting the data. Here, the multiple R-squared (0.2074) shows, that the model (i.e. explanatory variables) explains around 21 % of the variation in the response variable. The summary of residuals (i.e. the difference between observed and predicted response values) provides information about the symmetry of the residual distribution. Residual are dealt more later in chapter 2.4 along with model diagnostics.
+The results of the multiple linear regression model are shown in the summary table above. F-statistic with low p-value (p < 0.001) indicates that all the regression coefficients in the model are not zero, meaning that at least one of the variables included in the model has an actual statistical effect on the target variable (points). The multiple R-squared illustrates how well the model is fitting the data. Here, the multiple R-squared (0.2074) shows, that the model (i.e. explanatory variables) explains around 21 % of the variation in the response variable. The summary of residuals (i.e. the difference between observed and predicted response values) provides information about the symmetry of the residual distribution. Residual are dealt more in chapter 2.4 along with model diagnostics.
 
-The regression coefficient describes the relationship between explanatory and response variables; it illustrates the change in the response variable when the explanatory variable alter by one unit and the other variables stay constant. According to the coefficient table the estimates of surf and stra are not statistically significant. Instead the estimate of attitude is statistically significant with very low p-value (p < 0.001), showing that When attitude increases by one unit the points increase 0.3395 units. 
+The regression coefficient describes the relationship between explanatory and response variables; it illustrates the change in the response variable when the explanatory variable alter by one unit and the other variables stay constant. According to the coefficient table the estimates of surf and stra are not statistically significant. Instead the estimate of attitude is statistically significant with very low p-value (p < 0.001), showing that when attitude increases by one unit the points increase 0.3395 units. 
 
 ### 2.3.2 Second model
 
-Based on the above presented results from multivariate linear regression model, I modify the model by excluding variables which regression coefficients are not statistically significant (p > 0.05). Namely, variables surf and stra are dropped out and only attitude will be included in the model. 
+Based on the above presented results from multiple linear regression model, I modify the model by excluding variables which regression coefficients are not statistically significant (p > 0.05). Namely, variables surf and stra are dropped out and only attitude will be included in the model. 
 
 ``` {r}
 
@@ -80,13 +80,13 @@ model2 <- lm(points ~ attitude, data = learning2014)
 summary(model2)
 
 ```
-The results from the simple linear regression analysis are similar to above discussed results from the multivariate linear model. The multiple R-squared decreases a little bit showing that the new model explains about 19 % of the variation in the response variable, that attitude account for 29 % of the variation in points. If I have understood right, the value of multiple R-squared typically decreases when variables are taken out from the model (and increases when more variables are included), while the Adjusted R-squared takes account for the number of explanatory variables in the model. The Adjusted R-squared is practically the same in both models, that is around 19%.
+The results from the simple linear regression analysis are similar to above discussed results from the multivariate linear model. The multiple R-squared decreases a little bit showing that the new model explains about 19 % of the variation in the response variable. If I have understood right, the value of multiple R-squared typically decreases when variables are taken out from the model (and increases when more variables are included), while the Adjusted R-squared takes account for the number of explanatory variables in the model. The Adjusted R-squared is practically the same in both models, that is around 19%.
 
-The coefficient table include to estimates: intercept and attitude. The estimate of intercept can be interpreted here as the expected value of the response variable (points) when explanatory variables (i.e. attitude) are 0. This information could be utilized, for instance, if we want to calculate/predict the points based on the values of explanatory variables. For example, if a person's attitude is 25, we can predict their points by calculating as follows: 11.64715 + 25 x 0.35255 =  20,4509 (i.e. intercept + value of attitude x regression coefficient of attitude).
+The coefficient table includes two estimates: intercept and attitude. The estimate of the intercept can be interpreted here as the expected value of the response variable (points) when the explanatory variable (i.e. attitude) is 0. This information could be utilized, for instance, if we want to calculate/predict the points based on the known values of the explanatory variable. For example, if a person's attitude is 25, we can predict their points by calculating as follows: 11.64715 + 0.35255 x 25 =  20,4509 (i.e. intercept + regression coefficient of attitude x value of attitude = points).
 
-The estimate of attitude describes the relationship between attitude and points; the statistically significant (p < 0.001) regression coefficient of attitude (0.3526) illustrate that when attitude increases by one unit, the points are estimated to increase by 0.3526 points. 
+The estimate of attitude describes the relationship between attitude and points; the statistically significant (p < 0.001) regression coefficient of attitude (0.3526) shows that when attitude increases by one, the points increase by 0.3526 points. 
 
-## 2.4 Dignostic of regression model
+## 2.4 Regression diagnostics
 
 The key assumptions of linear regression model examined here are:
 
@@ -104,12 +104,10 @@ plot(model2, which = c(1,2, 5))
 
 ```
 
-In the figure **_'Residuals vs. fitted'_** the residuals are plotted against the fitted values of the response variable. The plot provides a graphical method to examine whether the errors have constant variance. A pattern in the scatter plot would indicate a problem relating this assumption, and imply that the size of the errors depend on the explanatory variables.Here, the residuals seem to be reasonably randomly spread out above and below the line suggesting that the assumptions relating to linearity and constant variance are valid.
+In the figure **_'Residuals vs. fitted'_** the residuals are plotted against the fitted values of the response variable. The plot provides a graphical method to examine whether the errors have constant variance. A pattern in the scatter plot would indicate a problem relating this assumption, and imply that the size of the errors depend on the explanatory variables. Here, the residuals seem to be reasonably randomly spread out above and below the line suggesting that the assumptions relating to linearity and constant variance are valid.
 
-**_Normal QQ-plot_** of the residuals helps to explore whether the errors are normally distributed. In an ideal case, the residuals would have a perfect match to the diagonal line, and in practice the better the points follow the line, the stronger evidence for the normality assumption. In the QQ-plot above, the residuals fit the line reasonably well, although a little curve is visible as the lower and upper tail deviate slightly from the diagonal line.
+**_Normal QQ-plot_** of the residuals helps to explore whether the errors are normally distributed. In an ideal case, the residuals would have a perfect match with the diagonal line, and in practice the better the points follow the line, the stronger evidence for the normality assumption. In the QQ-plot above, the residuals fit the line reasonably well, although a little curve is visible as the lower and upper tail deviate slightly from the diagonal line.
 
 **_'Residuals vs. leverage'_** plot describes how large influence a single observations has in the model and thus helps to identify if some observations have an unusually strong impact on determining the regression line. Observations falling outside of the Cook’s distance line (the *dotted red line*) are considered to be highly influential to the model fit (as they have large residual and high leverage), meaning that the results would change considerably if the observation were removed from the data. In the figure above the “Cook’s distance” line does not even appear in the plot indicating that none of the observation have an unusually large impact on the results.
-
-To summarize the graphical diagnostics: the plots examined above give no cause for concern about the simple linear regression model.
 
 
