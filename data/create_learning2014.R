@@ -1,7 +1,7 @@
 ################################################################################
 
 # Hans Hämäläinen
-# 4.11.2021
+# 10.11.2021
 
 # Introduction to Open Data Science 2021:
 ## RStudio Exercise 2: Data wrangling

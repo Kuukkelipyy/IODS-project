@@ -1,0 +1,27 @@
+# Chapter 3: Logistic regression
+
+
+
+```{r}
+date()
+
+```
+
+**_The third week in short_**
+
+- I started the week's work by reading the chapters 5 and 6 of the book Multivariate Analysis for the Behavioral science 
+- While reading the book I did the Datacamp exercises
+- After above described studying I started to work with the RStudio exercises, that is Data wrangling and analyzing the data
+- Analysis and interpretation of the results are reported below
+
+## 3.1 Data & hypotheses
+
+- kohdat 2, 3 ja 4 ?
+
+## 3.3 Logistic regression
+
+- kohdat 5 ja 6
+
+## Bonus
+
+- kohdat 7 ja 8
