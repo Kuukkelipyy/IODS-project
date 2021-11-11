@@ -7,21 +7,132 @@ date()
 
 ```
 
-**_The third week in short_**
+**_My third week in short_**
 
-- I started the week's work by reading the chapters 5 and 6 of the book Multivariate Analysis for the Behavioral science 
+- I started the week's work by reading the chapters 5 and 6 of the book *Multivariate Analysis for the Behavioral science* 
 - While reading the book I did the Datacamp exercises
 - After above described studying I started to work with the RStudio exercises, that is Data wrangling and analyzing the data
 - Analysis and interpretation of the results are reported below
 
 ## 3.1 Data & hypotheses
 
+In this exercise the data is drawn from the [Student Performance Data](https://archive.ics.uci.edu/ml/datasets/Student+Performance). The R-Script of my data preparationscan be found here. 
+
+``` {r message = FALSE, warning = FALSE}
+# access to all packages needed
+library(dplyr)
+library(ggplot2)
+library(GGally)
+library(tidyr)
+library(ggpubr)
+
+# read the prepared data set from local file
+alc <- read.table("data/alc.csv")
+
+# examine the data
+dim(alc)
+str(alc)
+
+```
+
 - kohdat 2, 3 ja 4 ?
 
-## 3.3 Logistic regression
+The prepared data consist of 370 observations (rows) of 35 variables (columns), that is information from 370 respondents regarding 35 variables. After examining the variables in the data I choose the following four variables for further examination as I assume they are probably associated with the level of consumption of alcohol:
+
+1) sex; student's gender (binary: 'F' - female or 'M' - male) 
+2) romantic; with a romantic relationship (binary: yes or no) 
+3) studytime; weekly study time (numeric: 1 - <2 hours, 2 - 2 to 5 hours, 3 - 5 to 10 hours, or 4 - >10 hours) 
+4) goout; going out with friends (from 1 (very low) to 5 (very high))
+
+My hypotheses for each of the above presented variables are:
+1) Male students are more likely to be high users of alcohol compared to females
+2) Students are in a romantic relationship are less likely to be high users compared to those you are not
+3) Students who spend more time studying are less likely high users than those who study less
+4) Student who go out with their friends are more likely to be high users of alcohol than the ones who go out less often
+
+
+**_Note:_** I picked variables that would be logical explanatory factors for high alcohol consumption; i.e. could be logically the cause, not the consequence. For example, high use of alcohol predicting grades would be a logical assumption as well, but not other way round, and hence I do not examine their association as 'high use' should be used as the target variable. Similarly many other variables would not make sense as explanatory variable (as they are more likely the outcome of alcohol use, not cause), although they are probably associated with the consumption of alcohol (such as ' number of school absences')
+
+
+```{r message=FALSE, warning=FALSE}
+
+# before examining the variables I'll transform the two character variables of interest to factors
+alc <- mutate(alc, sex = as.factor(sex), romantic = as.factor(romantic))
+
+# select the names of the variables of interest
+varnames <- select(alc, sex, romantic, studytime, goout, high_use) %>%
+  colnames()
+
+# summary of each variable
+select(alc, varnames) %>%
+  summary()
+
+# a bar plot of each variable
+gather(alc[varnames]) %>% ggplot(aes(value)) + 
+  facet_wrap("key", scales = "free") +
+  geom_bar()
+
+# cross-tabulations with high_use
+addmargins(table(alc$sex, alc$high_use))
+addmargins(table(alc$romantic, alc$high_use))
+addmargins(table(alc$studytime, alc$high_use))
+addmargins(table(alc$goout, alc$high_use))
+
+# probtable with margins and rounded
+round(addmargins(prop.table(table(alc$sex, alc$high_use),1),2) * 100)
+round(addmargins(prop.table(table(alc$romantic, alc$high_use),1),2) * 100)
+round(addmargins(prop.table(table(alc$studytime, alc$high_use),1),2) * 100)
+round(addmargins(prop.table(table(alc$goout, alc$high_use),1),2) * 100)
+
+'
+chisq.test(alc$sex, alc$high_use)
+chisq.test(alc$goout, alc$high_use)
+chisq.test(alc$freetime, alc$high_use)
+chisq.test(alc$studytime, alc$high_use)
+chisq.test(alc$romantic, alc$high_use)
+'
+
+# proportion figures
+
+t1 <- ggplot(data = alc, aes(x = sex, fill = high_use)) +
+  geom_bar(position = "fill") +
+  scale_y_continuous(labels = scales::percent) +
+  ylab("%") +
+  xlab("Gender")
+
+t2 <- ggplot(alc, aes(romantic, fill = high_use)) +
+  geom_bar(position = "fill") +
+  scale_y_continuous(labels = scales::percent) +
+  ylab("%") +
+  xlab("Romantic relationship")
+
+t3 <- ggplot(alc, aes(x = goout, fill = high_use)) + 
+  geom_bar(position = "fill") +
+  scale_y_continuous(labels = scales::percent) +
+  ylab("%") +
+  xlab("Go out with friends")
+
+t4 <- ggplot(alc, aes(x = studytime, fill = high_use)) + 
+  geom_bar(position = "fill") +
+  scale_y_continuous(labels = scales::percent) +
+  ylab("%") +
+  xlab("Studytime")
+
+# all plots in one figure
+ggarrange(t1 + rremove("legend"), t2 + rremove("legend"), t3 + rremove("legend"), t4 + rremove("legend"),
+          ncol = 2, nrow = 2, 
+          common.legend = TRUE, legend = "bottom")
+
+
+```
+
+
+
+
+## 3.2 Logistic regression
 
 - kohdat 5 ja 6
 
-## Bonus
+## Bonus: Cross-validation
 
 - kohdat 7 ja 8

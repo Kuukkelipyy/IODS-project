@@ -95,18 +95,12 @@ write.table(alc, file = "data/alc.csv" )
 
 ################################################################################
 
-str(alc)
+# NOTE!:
+## The constructed data is a bit different compared to the data provided in GitHub (https://github.com/rsund/IODS-project/raw/master/data/alc.csv)
+### GitHub data have the same number of observations but more variables ('dublicates' and constructed id-variables), which are probably useless in the exercise!
+### Those variables are not in the DataCamp data either. Instead DataCamp-file have more observations, but that is said to be an error
 
-# Compare the data to the file provided:
-correct_data <- read.csv("https://github.com/rsund/IODS-project/raw/master/data/alc.csv", sep = ",", header = TRUE)
-str(correct_data)
+### in short: I think the data constructed here is correctly constructed ;)
 
-summary(correct_data$G1)
-summary(alc$G1)
+################################################################################
 
-summary(correct_data$alc_use)
-summary(alc$alc_use)
-
-# There are differences!: more variables, which are probably useless in the exercise!
-## those vars are not in Datacamp dataframe
-## instead datacamp dataframe have more observations BUT they are said to be incorrect 
