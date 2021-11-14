@@ -91,7 +91,7 @@ glimpse(alc)
 #-----------------------
 
 # save the data to 'data' folder in the working directory
-write.table(alc, file = "data/alc.csv" )
+write.table(alc, file = "data/alc.csv", sep = ";")
 
 ################################################################################
 
