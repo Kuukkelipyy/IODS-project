@@ -16,8 +16,6 @@ date()
 
 ## 3.1 Data
 
-In this exercise the data is drawn from the [Student Performance Data](https://archive.ics.uci.edu/ml/datasets/Student+Performance), which includes data on student achievements in secondary education of two Portuguese schools.  
-
 ``` {r message = FALSE, warning = FALSE}
 # access to all packages needed
 library(dplyr)
@@ -35,18 +33,18 @@ dim(alc)
 colnames(alc)
 
 ```
-After data preparations, the data consist of 370 observations (rows) of 35 variables (columns), that is information from 370 respondents regarding 35 variables. More info regarding data wrangling can be found from this R-Script-file. The names of the variable are shown above and more detailed description of them is presented in [the webpage of the original data](https://archive.ics.uci.edu/ml/datasets/Student+Performance) 
+In this exercise the data is drawn from the [Student Performance Data set](https://archive.ics.uci.edu/ml/datasets/Student+Performance), which includes information on student achievements in secondary education of two Portuguese schools. After data wrangling, the data set used here consist of 370 observations (rows) of 35 variables (columns), that is information from 370 respondents regarding 35 variables. The names of the variables included in the prepared data set are shown above and more detailed description of them is presented in [the description of the Student Performance Data](https://archive.ics.uci.edu/ml/datasets/Student+Performance). 
 
 ### 3.2.1 Selected variables and hypotheses
 
 After examining the variables in the data I chose the following four variables for further examination as I assume they could be associated with the level of alcohol consumption:
 
-1) sex; student's gender (binary: 'F' - female or 'M' - male) 
-2) romantic; with a romantic relationship (binary: yes or no) 
-3) studytime; weekly study time (numeric: 1 - <2 hours, 2 - 2 to 5 hours, 3 - 5 to 10 hours, or 4 - >10 hours) 
-4) goout; going out with friends (from 1 (very low) to 5 (very high))
+1) **_sex_**; student's gender (F = female, M = male) 
+2) **_romantic_**; with a romantic relationship (yes or no) 
+3) **_studytime_**; weekly study time (numeric: 1 = less than 2 hours, 2 = 2 to 5 hours, 3 = 5 to 10 hours, 4 = over 10 hours) 
+4) **_goout_**; going out with friends (from 1 (very low) to 5 (very high))
 
-My hypotheses regarding each of the above presented variables are:
+My hypotheses are:
 
 1) Male students are more likely to be high users of alcohol compared to females
 2) Students with a romantic relationship are less likely to be high users compared to those you are not in a relationship
@@ -55,7 +53,7 @@ My hypotheses regarding each of the above presented variables are:
 
 ### 3.2.2 Overview of the selected variables
 
-Below I present the summary tables as well as bar plots of each variable of interest. They show the distributions of the variables in question.
+Below I present the summary tables as well as plots of each variable of interest showing the distributions of the variables in question.
 
 ```{r message=FALSE, warning=FALSE}
 
@@ -79,7 +77,7 @@ gather(alc[varnames]) %>% ggplot(aes(value)) +
 
 ### 3.2.3 Alcohol consumpion and selected variables 
 
-Below I presented a descriptive examination on how the selected variables are related with alcohol consumption. First all variables of interest are cross-tabulated with the 'high use of alcohol' variables, after which the figure show the proportional distributions of high users.
+Next, I examine how the selected variables are related with alcohol consumption. First all variables of interest are tabulated with the 'high use of alcohol' variables, after which the figure shows the proportional distributions of high users.
 
 ```{R}
 
@@ -126,27 +124,22 @@ t4 <- ggplot(alc, aes(x = studytime, fill = high_use)) +
 # all plots in one figure
 ggarrange(t1 + rremove("legend"), t2 + rremove("legend"), t3 + rremove("legend"), t4 + rremove("legend"),
           ncol = 2, nrow = 2, 
-          common.legend = TRUE, legend = "bottom")
+          common.legend = TRUE, legend = "right")
 
 
 ```
 
-The tables and figure above indicate that the are some differences in the alcohol consumption regarding the variables in examination.  
-
+The tables and figure above indicate that bigger share of males are high users of alcohol compared to females. Similarly, the more the student go out with friends or the less they use for studying, the bigger is the share of high users. In contrast, the share of high users of alcohol is quite the same among those who are in a romantic relationship and those who are not. Thus, these descriptive results provide support for the above-presented hypotheses 1, 3 and 4, while hypothesis 2 is questionable. 
 
 ## 3.3 Logistic regression
 
 ```{r}
 # logistic regression model
-model1 <- glm(high_use ~ sex + romantic + studytime + goout, data = alc, family = "binomial")
+## studytime is used as factors in the model
+model1 <- glm(high_use ~ sex + romantic + goout + as.factor(studytime), data = alc, family = "binomial")
 
 # summary of the results
 summary(model1)
-
-```
-Interpretation of the above results.."Present and interpret the coefficients of the model as odds ratios and provide confidence intervals for them. Interpret the results and compare them to your previously stated hypothesis"
-
-```{r}
 
 # compute odds ratios (OR)
 OR <- coef(model1) %>% 
@@ -162,19 +155,19 @@ OR_with_CI <- cbind(OR, CI)
 round(OR_with_CI, digits = 2)
 
 ```
+
+The results from logistic regression model are presented above. Having a romantic relationship is not significantly associated with the use of alcohol The results show that gender, time used for studying and going out with friends are statistically significant explanatory variables of high consumption of alcohol. However, all the associations are not rectilinear, which will be discussed along with odds ratios.
+
+The odds ratios illustrate that males (OR 2.03) are about twice as likely to be high users compared to females. Going out with friends more often increase (OR = 2.10) the likelihood of being high user compared to those who goes out the least often (the actual scale of the variable is somewhat obscure). Finally, compared to students who study less than two hour  those who study 5 to 10 hours are about three times (OR = 0.34) less likely to be high users and respectively those who study over 10 hours (OR = 0.28) are about 3.5 times less likely to be high users. Instead, those who study 2-5 hours are not statistically more or less likely to be high users compared to the reference group. 
+
 ### Predictions
 
-Using the variables which, according to your logistic regression model, had a statistical relationship with high/low alcohol consumption, explore the predictive power of you model. 
-- Provide a 2x2 cross tabulation of predictions versus the actual values and 
-- optionally display a graphic visualizing both the actual values and the predictions. 
-- Compute the total proportion of inaccurately classified individuals (= the training error) and comment on all the results. Compare the performance of the model with performance achieved by some simple guessing strategy
-
-According to the above-presented model all variables except 'romance' had statistically significant relationship with high/low alcohol consumption. Next, we examine the accurate the model predictions are.
+According to the above-presented model all variables except 'romance' had statistically significant relationship with high/low alcohol consumption. Next, we build a new regression model without the romance variable and examine how accurate the model predictions are.
 
 ```{r}
 
 # new logistic regression model
-model2 <- glm(high_use ~ sex + studytime + goout, data = alc, family = "binomial")
+model2 <- glm(high_use ~ sex + as.factor(studytime) + goout, data = alc, family = "binomial")
 
 # predicted probabilities and prediction (> 0.5) of high_use and add it to the data.frame
 probabilities <- predict(model2, type = "response")
@@ -209,7 +202,7 @@ First table provides shows cross-tabulation of predictions against the actual va
 
 ## 3.4 Cross-validation
 
-### 10-fold cross-validation of the model (bonus)
+### 3.4.1 10-fold cross-validation of the model (bonus)
 
 ```{r}
 
@@ -228,21 +221,22 @@ crossvalid$delta[1]
 
 The mean error in the training data is 0.224. The mean prediction error for the testing data is around 0.24 in the 10-fold cross-validation. The mean prediction error in the Datacamp model was about 0.26, suggesting that the model presented here has slightly better test performance; i.e. the model is more accurate predicting the high consumption of alcohol.
 
-### Finding more parsimonious model (super-bonus)
+###3.4.2 Finding more parsimonious model (super-bonus)
 
 Here I utilize AIC (*Akaike Information Criteria*) backward elimination -procedure for selecting the explanatory variables for the model. I start by selecting 10 variables and from there start to elimination. 
 
 ```{r}
+
 # logistic regression model
-model3 <- glm(high_use ~ sex + age + Pstatus + absences + failures + schoolsup + studytime + goout + activities + freetime, data = alc, family = "binomial")
+model3 <- glm(high_use ~ sex + age + Pstatus + absences + failures + schoolsup + as.factor(studytime) + goout + activities + freetime, data = alc, family = "binomial")
 
 step(model3, direction = "backward")
 ```
-The backward elimination suggest that we should keep five of those original 10 variables; sex, failures, activities, studytime, absences and goout. Thus, I will run the logistic model with those variables and conduct the 10-fold cross-validation.
+The backward elimination suggest that we should keep five of those original 10 variables; sex, failures, activities, absences and goout. Interestingly, studytime was dropped off! Next, I will run the logistic model with those variables and conduct the 10-fold cross-validation.
 
 ```{r}
 
-model4 <- glm(high_use ~ sex + failures + activities + studytime + absences + goout,
+model4 <- glm(high_use ~ sex + failures + activities + absences + goout,
               data = alc, family = "binomial")
 
 summary(model4)
@@ -261,4 +255,4 @@ ggplot(alc, aes(x = probability_m4, y = high_use, col = prediction_m4)) +
 
 
 ```
-The table above present the summary of fourth model. Although all of them are not statistically significant I keep them in the model as suggested by previously conducted backward selection. According to the 10-fold cross-validation, the mean prediction error for the testing data is around 0.21, suggesting that this model has better test performance than the model 3 examined above. The figure provides of graphical confirmation of this assumption. 
+The table above present the summary of the fourth model. According to the 10-fold cross-validation, the mean prediction error for the testing data is around 0.20, suggesting that this model has better test performance than the model 3 examined above. The figure provides of graphical confirmation/evidence for this assumption. When I added studytime into the model the prediction error for the testing data increased about one percent, which confirmed that the model actually fits better without it. 
