@@ -1,7 +1,7 @@
 ################################################################################
 
 # Hans Hämäläinen
-# 10.11.2021
+# 15.11.2021
 
 # Introduction to Open Data Science 2021:
 ## RStudio Exercise 3: Data wrangling
@@ -28,7 +28,7 @@ dim(por_data)
 str(math_data)
 dim(math_data)
 
-# both data set have the same variables/columns
+# check that both data set have the same variables/columns
 identical(colnames(por_data), colnames(math_data))
 
 #-------------------
@@ -41,7 +41,7 @@ vary_cols <- c("failures","paid","absences","G1","G2","G3")
 # Second: pick the columns which are used as identifiers of respondents
 join_cols <- setdiff(colnames(math_data), vary_cols)
 
-# Third: merge the two data sets with inner_join verb
+# Third: merge the two data sets with inner_join verb and add suffixes
 math_por <- inner_join(math_data, por_data, by = join_cols, suffix = c(".math", ".por"))
 
 # the joined data 'math_por' has:
@@ -75,8 +75,7 @@ for(var_name in vary_cols) {
 
 ## NOTE: regarding characters it does not make sense here to take the value of the first one
 ### e.g. math.paid = NO, por.paid = YES
-### however probably the var is not used, and would be better to just drop out from the data
-### anycase, it will be included here because it was kind of instructed
+### Probably would be better to just drop out from the data, but for now it is kept in the data... 
 
 # create the variable combining weekday and weekend alcohol consumption
 alc <- mutate(alc, alc_use = (Dalc + Walc) / 2)
@@ -97,10 +96,9 @@ write.table(alc, file = "data/alc.csv", sep = ";")
 
 # NOTE!:
 ## The constructed data is a bit different compared to the data provided in GitHub (https://github.com/rsund/IODS-project/raw/master/data/alc.csv)
-### GitHub data have the same number of observations but more variables ('dublicates' and constructed id-variables), which are probably useless in the exercise!
-### Those variables are not in the DataCamp data either. Instead DataCamp-file have more observations, but that is said to be an error
-
-### in short: I think the data constructed here is correctly constructed ;)
+### GitHub data have the same number of observations but more variables ('dublicates' and constructed id-variables), which are probably useless in the exercise.
+### Those variables are not in the DataCamp data either. Instead DataCamp-file have more observations, but that is said to be an error.
+### IN short: I think the data constructed here is correctly constructed ;)
 
 ################################################################################
 

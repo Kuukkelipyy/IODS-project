@@ -184,6 +184,12 @@ pre code {
 <li><a href="#linear-regression-modelling">2.3 Linear regression modelling</a></li>
 <li><a href="#regression-diagnostics">2.4 Regression diagnostics</a></li>
 </ul></li>
+<li><a href="#chapter-3-logistic-regression">Chapter 3: Logistic regression</a>
+<ul>
+<li><a href="#data-hypotheses">3.1 Data &amp; hypotheses</a></li>
+<li><a href="#logistic-regression">3.3 Logistic regression</a></li>
+<li><a href="#bonus">Bonus</a></li>
+</ul></li>
 </ul>
 </div>
 
@@ -193,11 +199,10 @@ pre code {
 </div>
 <div id="chapter-1-start-me-up" class="section level1">
 <h1>Chapter 1: Start me up!</h1>
-<p><em>Write a short description about the course and add a link to your GitHub repository here. This is an R Markdown (.Rmd) file so you should use R Markdown syntax.</em></p>
 <pre class="r"><code># This is a so-called &quot;R chunk&quot; where you can write R code.
 
 date()</code></pre>
-<pre><code>## [1] &quot;Wed Nov 10 10:56:19 2021&quot;</code></pre>
+<pre><code>## [1] &quot;Wed Nov 10 21:32:10 2021&quot;</code></pre>
 <div id="some-thoughts" class="section level2">
 <h2>1.1 Some thoughts</h2>
 <p>I’m really excited to start this course. I expect to learn a lot of using R and RStudio.</p>
@@ -211,7 +216,7 @@ date()</code></pre>
 <div id="chapter-2-regression-and-model-validation" class="section level1">
 <h1>Chapter 2: Regression and model validation</h1>
 <pre class="r"><code>date()</code></pre>
-<pre><code>## [1] &quot;Wed Nov 10 10:56:19 2021&quot;</code></pre>
+<pre><code>## [1] &quot;Wed Nov 10 21:32:10 2021&quot;</code></pre>
 <p><strong>The second week in short:</strong></p>
 <ul>
 <li>I began by reading the suggested chapters 3 and 4 from the book <em>Multivariate Analysis for the Behavioral Sciences</em></li>
@@ -348,6 +353,37 @@ plot(model2, which = c(1,2, 5))</code></pre>
 <p>In the figure <strong><em>‘Residuals vs. fitted’</em></strong> the residuals are plotted against the fitted values of the response variable. The plot provides a graphical method to examine whether the errors have constant variance. A pattern in the scatter plot would indicate a problem relating this assumption, and imply that the size of the errors depend on the explanatory variables. Here, the residuals seem to be reasonably randomly spread out above and below the line suggesting that the assumptions relating to linearity and constant variance are valid.</p>
 <p><strong><em>Normal QQ-plot</em></strong> of the residuals helps to explore whether the errors are normally distributed. In an ideal case, the residuals would have a perfect match with the diagonal line, and in practice the better the points follow the line, the stronger evidence for the normality assumption. In the QQ-plot above, the residuals fit the line reasonably well, although a little curve is visible as the lower and upper tail deviate slightly from the diagonal line.</p>
 <p><strong><em>‘Residuals vs. leverage’</em></strong> plot describes how large influence a single observations has in the model and thus helps to identify if some observations have an unusually strong impact on determining the regression line. Observations falling outside of the Cook’s distance line (the <em>dotted red line</em>) are considered to be highly influential to the model fit (as they have large residual and high leverage), meaning that the results would change considerably if the observation were removed from the data. In the figure above the “Cook’s distance” line does not even appear in the plot indicating that none of the observation have an unusually large impact on the results.</p>
+<hr />
+</div>
+</div>
+<div id="chapter-3-logistic-regression" class="section level1">
+<h1>Chapter 3: Logistic regression</h1>
+<pre class="r"><code>date()</code></pre>
+<pre><code>## [1] &quot;Wed Nov 10 21:32:16 2021&quot;</code></pre>
+<p><strong><em>My third week in short</em></strong></p>
+<ul>
+<li>I started the week’s work by reading the chapters 5 and 6 of the book <em>Multivariate Analysis for the Behavioral science</em></li>
+<li>While reading the book I did the Datacamp exercises</li>
+<li>After above described studying I started to work with the RStudio exercises, that is Data wrangling and analyzing the data</li>
+<li>Analysis and interpretation of the results are reported below</li>
+</ul>
+<div id="data-hypotheses" class="section level2">
+<h2>3.1 Data &amp; hypotheses</h2>
+<ul>
+<li>kohdat 2, 3 ja 4 ?</li>
+</ul>
+</div>
+<div id="logistic-regression" class="section level2">
+<h2>3.3 Logistic regression</h2>
+<ul>
+<li>kohdat 5 ja 6</li>
+</ul>
+</div>
+<div id="bonus" class="section level2">
+<h2>Bonus</h2>
+<ul>
+<li>kohdat 7 ja 8</li>
+</ul>
 <hr />
 <p>(more chapters to be added similarly as we proceed with the course!)</p>
 </div>

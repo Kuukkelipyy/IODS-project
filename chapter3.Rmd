@@ -156,9 +156,11 @@ round(OR_with_CI, digits = 2)
 
 ```
 
-The results from logistic regression model are presented above. Having a romantic relationship is not significantly associated with the use of alcohol The results show that gender, time used for studying and going out with friends are statistically significant explanatory variables of high consumption of alcohol. However, all the associations are not rectilinear, which will be discussed along with odds ratios.
+The results from a logistic regression model are presented above. The value of null deviance is for a model without any explanatory variables and the residual deviance is the value when taking all explanatory variables into account. Higher numbers indicate bad fit, and respectively smaller values indicates good fit. The difference between null deviance and residual deviance illustrates how good is the fit of the given model with explanatory variables; the greater the difference, the better. Although the value of the residual deviance is quite high, the difference shows that the model with explanatory variables is more fit than a model including only the intercept term. The value of AIC (Akaike’s information criteria) can be used when comparing competing models (this will be discussed more below).
 
-The odds ratios illustrate that males (OR 2.03) are about twice as likely to be high users compared to females. Going out with friends more often increase (OR = 2.10) the likelihood of being high user compared to those who goes out the least often (the actual scale of the variable is somewhat obscure). Finally, compared to students who study less than two hour  those who study 5 to 10 hours are about three times (OR = 0.34) less likely to be high users and respectively those who study over 10 hours (OR = 0.28) are about 3.5 times less likely to be high users. Instead, those who study 2-5 hours are not statistically more or less likely to be high users compared to the reference group. 
+Acdoring to the coefficient table having a romantic relationship is not significantly associated with the use of alcohol. Instead, the results show that gender, time used for studying and going out with friends are statistically significant variables predictin high consumption of alcohol. However, all the associations are not rectilinear, which will be discussed along with the odds ratios.
+
+The odds ratios illustrate that males (OR 2.03) are about twice as likely to be high users compared to females. Going out with friends more often increase (OR = 2.10) the likelihood of being high user compared to those who goes out the least often (note that the actual scale of the variable is somewhat obscure). Finally, compared to students who study less than two hour, those who study 5 to 10 hours are about three times (OR = 0.34) less likely to be high users and respectively those who study over 10 hours (OR = 0.28) are about 3.5 times less likely to be high users. Instead, those who study 2-5 hours are not statistically more or less likely to be high users compared to the reference group. 
 
 ### Predictions
 
@@ -197,8 +199,7 @@ loss_func <- function(class, prob) {
 loss_func(class = alc$high_use, prob = alc$probability)
 
 ```
-First table provides shows cross-tabulation of predictions against the actual values of high_use, and the next table shows the proportions of each cell. According to the proportion table about 77.6 % of predictions (cells: False/false + True/true) match with actual values of observations, while 22,4 % of the predictions (cells: True/False + False/True) are false. This is also confimed by using the self-defined 'loss function' to see the share of false predictions, which is 22,4 %.
-
+First table provides cross-tabulation of predictions against the actual values of high_use, and the next table shows the proportions of each cell. According to the proportion table about 77.6 % of predictions (cells: False/false + True/true) match with actual values of observations, while 22,4 % of the predictions (cells: True/False + False/True) are incorrect. This is also confirmed by using the self-defined 'loss function' to see the share of false predictions, which is 22,4 %. The plot should visualize the results, although it seems there is something wrong with the figure (but I can't find error in the code).
 
 ## 3.4 Cross-validation
 
@@ -221,9 +222,9 @@ crossvalid$delta[1]
 
 The mean error in the training data is 0.224. The mean prediction error for the testing data is around 0.24 in the 10-fold cross-validation. The mean prediction error in the Datacamp model was about 0.26, suggesting that the model presented here has slightly better test performance; i.e. the model is more accurate predicting the high consumption of alcohol.
 
-###3.4.2 Finding more parsimonious model (super-bonus)
+### 3.4.2 Finding more parsimonious model (super-bonus)
 
-Here I utilize AIC (*Akaike Information Criteria*) backward elimination -procedure for selecting the explanatory variables for the model. I start by selecting 10 variables and from there start to elimination. 
+Here I utilize the AIC (Akaike's Information Criteria) backward elimination -procedure for selecting the explanatory variables for the model. The AIC index takes into account the statistical goodness of fit and the number of variables in the model by increasing a penalty for a greater number of variables. In the series of competing models lower AIC values are preferred; i.e. the aim is to achieve as low AIC value as possible by excluding variables - that makes the value higher - one at the time. The elimination ends when removing more variables would not improve the AIC score. I start by selecting 10 variables and from there start the elimination. 
 
 ```{r}
 
@@ -232,7 +233,7 @@ model3 <- glm(high_use ~ sex + age + Pstatus + absences + failures + schoolsup +
 
 step(model3, direction = "backward")
 ```
-The backward elimination suggest that we should keep five of those original 10 variables; sex, failures, activities, absences and goout. Interestingly, studytime was dropped off! Next, I will run the logistic model with those variables and conduct the 10-fold cross-validation.
+The backward elimination suggest that we should keep five of those original 10 variables; sex, failures, activities, absences and goout. Interestingly, studytime was excluded! Next, I will run the logistic model with those variables and conduct the 10-fold cross-validation.
 
 ```{r}
 
@@ -255,4 +256,5 @@ ggplot(alc, aes(x = probability_m4, y = high_use, col = prediction_m4)) +
 
 
 ```
+
 The table above present the summary of the fourth model. According to the 10-fold cross-validation, the mean prediction error for the testing data is around 0.20, suggesting that this model has better test performance than the model 3 examined above. The figure provides of graphical confirmation/evidence for this assumption. When I added studytime into the model the prediction error for the testing data increased about one percent, which confirmed that the model actually fits better without it. 
