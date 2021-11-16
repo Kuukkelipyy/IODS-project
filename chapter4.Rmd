@@ -1,0 +1,62 @@
+# Chapter 4: Clustering and classification
+
+
+```{r}
+date()
+
+```
+
+**_My fourth week in short_**
+
+- The week started by doing the peer-reviews. It was nice to see what other students have done!
+- Next I started to read the related chapters and figurring out the DataCamp exercises
+
+## 4.1 Data
+```{r message=FALSE, warning=FALSE}
+# access to packages
+library(MASS)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(corrplot)
+
+# get the data (included in MASS)
+data(Boston)
+
+# structure of the data
+str(Boston)
+dim(Boston)
+
+```
+
+The data Boston data set utilized includes 'Housing Values in Suburbs of Boston', that is different variables relating housing in Boston. The data consists of 506 observations or 14 variables (i.e. 506 rows and 14 columns). Decription of the variables can be seen from [the description of the data set](https://stat.ethz.ch/R-manual/R-devel/library/MASS/html/Boston.html)
+
+## 4.2 Overview of the Boston data
+
+```{r}
+summary(Boston)
+
+# let's use gather from tidyr-package; gather returns key-value pairs of variables
+# draw a bar plot of each variable
+gather(Boston) %>% 
+  ggplot(aes(value)) + 
+  facet_wrap("key", scales = "free") +
+  geom_histogram()
+
+# construct a correlation matrix and round the results
+cor_matrix <-cor(Boston) %>%
+    round(digits = 2)
+
+# visualize the correlation matrix
+corrplot(cor_matrix, method = "circle", type = "upper", cl.pos = "r", tl.pos = "d", tl.cex = 0.8)
+
+```
+
+- Show a graphical overview of the data and show summaries of the variables in the data
+- Describe and interpret the outputs, commenting on the distributions of the variables and the relationships between them
+
+- Many variables have really skewed distributions as can be noted from the summaries and histograms
+- The correlation matrix shows that many variables are highly correlated with other variables
+
+## 4.3 Standardized dataset 
+
