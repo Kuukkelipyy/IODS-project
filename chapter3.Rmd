@@ -35,7 +35,7 @@ colnames(alc)
 ```
 In this exercise the data is drawn from the [Student Performance Data set](https://archive.ics.uci.edu/ml/datasets/Student+Performance), which includes information on student achievements in secondary education of two Portuguese schools. After data wrangling, the data set used here consist of 370 observations (rows) of 35 variables (columns), that is information from 370 respondents regarding 35 variables. The names of the variables included in the prepared data set are shown above and more detailed description of them is presented in [the description of the Student Performance Data](https://archive.ics.uci.edu/ml/datasets/Student+Performance). 
 
-### 3.2.1 Selected variables and hypotheses
+## 3.2 Selected variables and hypotheses
 
 After examining the variables in the data I chose the following four variables for further examination as I assume they could be associated with the level of alcohol consumption:
 
@@ -51,9 +51,9 @@ My hypotheses are:
 3) Students who spend more time studying are less likely be high users of alcohol than those who study less
 4) Students who go out with their friends more often are more likely to be high users of alcohol than the students who go out less often
 
-### 3.2.2 Overview of the selected variables
+### 3.2.1 Overview of the selected variables
 
-Below I present the summary tables as well as plots of each variable of interest showing the distributions of the variables in question.
+Below I present the summary tables as well as plots of each variable of interest.
 
 ```{r message=FALSE, warning=FALSE}
 
@@ -68,16 +68,16 @@ varnames <- select(alc, sex, romantic, studytime, goout, high_use) %>%
 select(alc, varnames) %>%
   summary()
 
-# a bar plot of each variable
+# a plot of each variable
 gather(alc[varnames]) %>% ggplot(aes(value)) + 
   facet_wrap("key", scales = "free") +
   geom_bar()
 
 ```
 
-### 3.2.3 Alcohol consumpion and selected variables 
+### 3.2.2 Alcohol consumpion and selected variables 
 
-Next, I examine how the selected variables are related with alcohol consumption. First all variables of interest are tabulated with the 'high use of alcohol' variables, after which the figure shows the proportional distributions of high users.
+Next, I examine how the selected variables are related with alcohol consumption. First, all variables of interest are tabulated with the 'high use of alcohol' variable, after which the figure shows the proportional distributions of high users regarding each variable.
 
 ```{R}
 
@@ -121,7 +121,7 @@ t4 <- ggplot(alc, aes(x = studytime, fill = high_use)) +
   ylab("%") +
   xlab("Studytime")
 
-# all plots in one figure
+# all plots in one figure ('ggarrange' is from 'ggpubr' package)
 ggarrange(t1 + rremove("legend"), t2 + rremove("legend"), t3 + rremove("legend"), t4 + rremove("legend"),
           ncol = 2, nrow = 2, 
           common.legend = TRUE, legend = "right")
@@ -129,7 +129,7 @@ ggarrange(t1 + rremove("legend"), t2 + rremove("legend"), t3 + rremove("legend")
 
 ```
 
-The tables and figure above indicate that bigger share of males are high users of alcohol compared to females. Similarly, the more the student go out with friends or the less they use for studying, the bigger is the share of high users. In contrast, the share of high users of alcohol is quite the same among those who are in a romantic relationship and those who are not. Thus, these descriptive results provide support for the above-presented hypotheses 1, 3 and 4, while hypothesis 2 is questionable. 
+The tables and figure above indicate that bigger share of males are high users of alcohol compared to females. Similarly, the more the student go out with friends or the less time they use for studying, the bigger is the share of high users. In contrast, the share of high users of alcohol is quite the same among those who are in a romantic relationship and those who are not. Thus, these descriptive results provide support for the above-presented hypotheses 1, 3 and 4, while hypothesis 2 is rather questionable. 
 
 ## 3.3 Logistic regression
 
@@ -156,13 +156,13 @@ round(OR_with_CI, digits = 2)
 
 ```
 
-The results from a logistic regression model are presented above. The value of null deviance is for a model without any explanatory variables and the residual deviance is the value when taking all explanatory variables into account. Higher numbers indicate bad fit, and respectively smaller values indicates good fit. The difference between null deviance and residual deviance illustrates how good is the fit of the given model with explanatory variables; the greater the difference, the better. Although the value of the residual deviance is quite high, the difference shows that the model with explanatory variables is more fit than a model including only the intercept term. The value of AIC (Akaike’s information criteria) can be used when comparing competing models (this will be discussed more below).
+The results from a logistic regression model are presented above. The value of null deviance is for a model without any explanatory variables and the residual deviance is the value when taking all explanatory variables into account. Higher numbers indicate bad fit, and respectively smaller values indicate good fit. The difference between null deviance and residual deviance illustrates how good is the fit of the given model with explanatory variables; the greater the difference, the better. Although the value of the residual deviance is quite high, the difference shows that the model with explanatory variables is more fit than a model including only the intercept term. The value of AIC (Akaike’s information criteria) can be used for comparing competing models (this will be discussed more below).
 
-Acdoring to the coefficient table having a romantic relationship is not significantly associated with the use of alcohol. Instead, the results show that gender, time used for studying and going out with friends are statistically significant variables predictin high consumption of alcohol. However, all the associations are not rectilinear, which will be discussed along with the odds ratios.
+The coefficients illustrates the association between the explanatory variables and the target variables. The estimates can be also used, for instance, for calculating predicted probabilities of being a high user based on the known values of explanatory values. According to the coefficient table having a romantic relationship is not significantly associated with the use of alcohol. Instead, the results show that gender, time used for studying and going out with friends are statistically significant variables predicting high consumption of alcohol. However, all the associations are not rectilinear, which will be discussed along with the odds ratios.
 
-The odds ratios illustrate that males (OR 2.03) are about twice as likely to be high users compared to females. Going out with friends more often increase (OR = 2.10) the likelihood of being high user compared to those who goes out the least often (note that the actual scale of the variable is somewhat obscure). Finally, compared to students who study less than two hour, those who study 5 to 10 hours are about three times (OR = 0.34) less likely to be high users and respectively those who study over 10 hours (OR = 0.28) are about 3.5 times less likely to be high users. Instead, those who study 2-5 hours are not statistically more or less likely to be high users compared to the reference group. 
+The odds ratio (OR) illustrates the difference in the odds of being high user between groups. For instance, in the case of sex variable females are the reference group (OR = 1.00) and the odds of males are compared to the odds of females; the odds ratio shows that males (OR 2.03) are about twice as likely to be high users compared to females. Going out with friends more often increase (OR = 2.10) the likelihood of being high user compared to those who goes out the least often (note that the actual scale of the variable is somewhat obscure, and thus difficult to interpret). Finally, compared to students who study less than two hour, those who study 5 to 10 hours are about three times (OR = 0.34) less likely to be high users and respectively those who study over 10 hours (OR = 0.28) are about 3.5 times less likely to be high users. Instead, those who study 2-5 hours are not statistically more or less likely to be high users compared to the reference group (the coefficient is not statistically significant and the CI's of OR include 0). 
 
-### Predictions
+#### Predictions
 
 According to the above-presented model all variables except 'romance' had statistically significant relationship with high/low alcohol consumption. Next, we build a new regression model without the romance variable and examine how accurate the model predictions are.
 
@@ -199,7 +199,7 @@ loss_func <- function(class, prob) {
 loss_func(class = alc$high_use, prob = alc$probability)
 
 ```
-First table provides cross-tabulation of predictions against the actual values of high_use, and the next table shows the proportions of each cell. According to the proportion table about 77.6 % of predictions (cells: False/false + True/true) match with actual values of observations, while 22,4 % of the predictions (cells: True/False + False/True) are incorrect. This is also confirmed by using the self-defined 'loss function' to see the share of false predictions, which is 22,4 %. The plot should visualize the results, although it seems there is something wrong with the figure (but I can't find error in the code).
+The first table provides cross-tabulation of the predictions against the actual values of high_use, and the next table shows the proportions of each cell. According to the proportion table about 77.6 % of predictions (cells: False/false + True/true) match with actual values of observations, while 22,4 % of the predictions (cells: True/False + False/True) are incorrect. This is also confirmed by using the self-defined 'loss function' to see the share of false predictions, which is 22,4 %. The plot should visualize the results, although it seems there is something wrong with the figure (but I can't find an error in the code).
 
 ## 3.4 Cross-validation
 
@@ -257,4 +257,7 @@ ggplot(alc, aes(x = probability_m4, y = high_use, col = prediction_m4)) +
 
 ```
 
-The table above present the summary of the fourth model. According to the 10-fold cross-validation, the mean prediction error for the testing data is around 0.20, suggesting that this model has better test performance than the model 3 examined above. The figure provides of graphical confirmation/evidence for this assumption. When I added studytime into the model the prediction error for the testing data increased about one percent, which confirmed that the model actually fits better without it. 
+The table above presents the summary of the fourth model. According to the 10-fold cross-validation, the mean prediction error for the testing data is around 0.20, suggesting that this model has better test performance than the model 3 examined above. The figure provides of graphical confirmation/evidence for this assumption. Moreover, the value of residual deviance (smaller) and the difference between null vs. residual deviance (bigger) suggest that this new model is better than the previous one.
+
+
+**_Thanks for reading and for the upcoming feedback!_**
