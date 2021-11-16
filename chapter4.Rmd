@@ -9,7 +9,8 @@ date()
 **_My fourth week in short_**
 
 - The week started by doing the peer-reviews. It was nice to see what other students have done!
-- Next I started to read the related chapters and figurring out the DataCamp exercises
+- For warming up I did first the data wrangling exercise (preparing the data for the 5th week exercise)
+- Next I started to read the related chapters and figuring out the DataCamp exercises
 
 ## 4.1 Data
 ```{r message=FALSE, warning=FALSE}
