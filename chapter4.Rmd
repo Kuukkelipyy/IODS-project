@@ -29,7 +29,7 @@ dim(Boston)
 
 ```
 
-The data Boston data set utilized includes 'Housing Values in Suburbs of Boston', that is different variables relating housing in Boston. The data consists of 506 observations or 14 variables (i.e. 506 rows and 14 columns). Decription of the variables can be seen from [the description of the data set](https://stat.ethz.ch/R-manual/R-devel/library/MASS/html/Boston.html)
+The Boston data set utilized here includes 'Housing Values in Suburbs of Boston', that is different variables relating housing in the city of Boston. The data consists of 506 observations or 14 numeric (or integer) variables (i.e. 506 rows and 14 columns). Description of the variables can be seen from [the description of the data set](https://stat.ethz.ch/R-manual/R-devel/library/MASS/html/Boston.html)
 
 ## 4.2 Overview of the Boston data
 
@@ -52,11 +52,16 @@ corrplot(cor_matrix, method = "circle", type = "upper", cl.pos = "r", tl.pos = "
 
 ```
 
-- Show a graphical overview of the data and show summaries of the variables in the data
-- Describe and interpret the outputs, commenting on the distributions of the variables and the relationships between them
+*Show a graphical overview of the data and show summaries of the variables in the data Describe and interpret the outputs, commenting on the distributions of the variables and the relationships between them* (CHECK)
 
-- Many variables have really skewed distributions as can be noted from the summaries and histograms
-- The correlation matrix shows that many variables are highly correlated with other variables
+Summaries of the variables and the histograms presented above illustrates that the variables in the data set have really skewed distributions. The correlation matrix shows that many of variables are highly correlated (positively or negatively with the other variables.
 
 ## 4.3 Standardized dataset 
 
+*Standardize the dataset and print out summaries of the scaled data. How did the variables change? Create a categorical variable of the crime rate in the Boston dataset (from the scaled crime rate). Use the quantiles as the break points in the categorical variable. Drop the old crime rate variable from the dataset. Divide the dataset to train and test sets, so that 80% of the data belongs to the train set. (0-2 points)*
+
+## 4.4 Linear discriminant analysis 
+
+*Fit the linear discriminant analysis on the train set. Use the categorical crime rate as the target variable and all the other variables in the dataset as predictor variables. Draw the LDA (bi)plot.*
+
+## Parts 5., 6. and the rest
