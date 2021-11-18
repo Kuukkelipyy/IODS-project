@@ -10,7 +10,9 @@ date()
 
 - The week started by doing the peer-reviews. It was nice to see what other students have done!
 - For warming up I did first the data wrangling exercise (preparing the data for the 5th week exercise)
-- Next I started to read the related chapters and figuring out the DataCamp exercises
+- Next I started to read the related chapters and figuring out the DataCamp exercises (and their bugs)
+- Finally I did the RStudio exercises
+- This week's exercises were a bit annoying as I think the study materials did not provide adequate information to work with the exercises
 
 ## 4.1 Data
 ```{r message=FALSE, warning=FALSE}
@@ -59,11 +61,7 @@ Summaries of the variables and the histograms presented above illustrates that t
 
 ## 4.3 Standardized dataset 
 
-<<<<<<< HEAD
-First I'll scale the Boston data, that is standardize the variables and save it as a data.frame instead of a matrix. When variables are standardized their mean is adjusted to zero as can be seen from the summaries of the scaled variables which are shown below. Also 
-=======
-First I scale the Boston data, that is standardize the variables and save it as a data.frame instead of a matrix. When variables are centered their mean is adjusted to zero as can be seen from the summaries of the scaled variables which are shown below. Also 
->>>>>>> 161e7d485b469331b35627e03198245ebd78f0f3
+First I'll scale the Boston data, that is standardize the variables and save it as a data.frame instead of a matrix. When variables are centered, their mean is adjusted to zero as can be seen from the summaries of the scaled variables which are shown below.
 
 After scaling the data, I will create a new factor variable from the 'crime rate per capita' variable and use the quantiles as cut points. A summary of the new 'crime' variable can be found below.
 
@@ -109,13 +107,54 @@ test_set <- boston_scaled[-train_indexes,]
 ```
 
 
-## 4.4 Linear discriminant analysis 
+## 4.4 Linear discriminant analysis (LDA)
 
 *Fit the linear discriminant analysis on the train set. Use the categorical crime rate as the target variable and all the other variables in the dataset as predictor variables. Draw the LDA (bi)plot.*
 
+Relating this there was multiple errors and the video was not available in the Datacamp exercises. I found the instructions also rather poor. The book wasn't much of help for this LDA either. Anycase, let's fit the LDA and use 'crime' variable as the target variable and all the other variables as predictors. Below I show the results in a table and in a biplot. Luckily no interpretation were asked for relating this task.
+
+
 ```{r}
+# fit the linear discriminant analysis
+lda.fit <- lda(crime ~ ., data = train_set)
+# print the LDA results
+lda.fit
+# draw LDA biplot
+classes <- as.numeric(train_set$crime)
+plot(lda.fit, dimen = 2, col = classes, pch = classes)
+
+```
+
+Next, I will save the observed frequencies of the crime categories from the test data and then remove the variable, after which I test how well the fitted model predicts the values. The results are shown below. The classifier, that is the fitted model, did not predict the crime rates perfectly, alghouth the predictions are somewhat accurate. Most of the predictions matches the observed classes, and those that do not match falls mostly to the next classes (i.e. prediction are not right but close).
+
+
+```{r}
+# save the crime variable separately
+correct_cases <- test_set$crime
+# remove crime variable from the test data
+test_set <- select(test_set, -crime)
+# use LDA model for predicting crime cases
+lda.predict <- predict(lda.fit, newdata = test_set)
+# cross tabulate the correct cased with predictions
+table(correct = correct_cases, predicted = lda.predict$class)
+
+```
+
+## 4.5 K-means clustering 
+
+*Reload the Boston dataset and standardize the dataset (we did not do this in the Datacamp exercises, but you should scale the variables to get comparable distances). Calculate the distances between the observations. Run k-means algorithm on the dataset. Investigate what is the optimal number of clusters and run the algorithm again. Visualize the clusters (for example with the pairs() or ggpairs() functions, where the clusters are separated with colors) and interpret the results. (0-4 points)*
+
+```{r}
+# clean the environment (i.e. data.frames and variables etc.)
+rm(list = ls())
+
+# reload the Boston dataset
+data(Boston)
+# scale the Boston data and transform the matrix to data.frame
+boston_scaled <- Boston %>%
+  scale() %>%
+  as.data.frame()
 
 
 ```
 
-## Parts 5., 6. and the rest
