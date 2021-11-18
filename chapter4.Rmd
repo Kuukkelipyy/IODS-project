@@ -59,7 +59,7 @@ Summaries of the variables and the histograms presented above illustrates that t
 
 ## 4.3 Standardized dataset 
 
-First we scale the Boston data, that is standardize the variables and save it as a data.frame instead of a matrix. When variables are standardized their mean is adjusted to zero as can be seen from the summaries of the scaled variables which are shown below. Also 
+First I'll scale the Boston data, that is standardize the variables and save it as a data.frame instead of a matrix. When variables are standardized their mean is adjusted to zero as can be seen from the summaries of the scaled variables which are shown below. Also 
 
 After scaling the data, I will create a new factor variable from the 'crime rate per capita' variable and use the quantiles as cut points. A summary of the new 'crime' variable can be found below.
 
