@@ -55,14 +55,63 @@ corrplot(cor_matrix, method = "circle", type = "upper", cl.pos = "r", tl.pos = "
 
 *Show a graphical overview of the data and show summaries of the variables in the data Describe and interpret the outputs, commenting on the distributions of the variables and the relationships between them* (CHECK)
 
-Summaries of the variables and the histograms presented above illustrates that the variables in the data set have really skewed distributions. The correlation matrix shows that many of variables are highly correlated (positively or negatively with the other variables.
+Summaries of the variables and the histograms presented above illustrates that the variables in the data set have really skewed distributions. The correlation matrix shows that many of variables are highly correlated. The correlation coefficients vary from 1 to -1. A positive coefficient indicate that high values of variable 'X' are associated with the high values of variable 'Y'. Respectively negative coefficient indicate that high values of 'X' are associated with low values of 'Y'.
 
 ## 4.3 Standardized dataset 
 
-*Standardize the dataset and print out summaries of the scaled data. How did the variables change? Create a categorical variable of the crime rate in the Boston dataset (from the scaled crime rate). Use the quantiles as the break points in the categorical variable. Drop the old crime rate variable from the dataset. Divide the dataset to train and test sets, so that 80% of the data belongs to the train set. (0-2 points)*
+First I scale the Boston data, that is standardize the variables and save it as a data.frame instead of a matrix. When variables are centered their mean is adjusted to zero as can be seen from the summaries of the scaled variables which are shown below. Also 
+
+After scaling the data, I will create a new factor variable from the 'crime rate per capita' variable and use the quantiles as cut points. A summary of the new 'crime' variable can be found below.
+
+Finally, I will split the scaled data into a training and testing data sets, which are then used in the next subchapter.
+
+```{r}
+
+# scale the Boston data and transform the matrix to data.frame
+boston_scaled <- Boston %>%
+  scale() %>%
+  as.data.frame()
+summary(boston_scaled)
+
+# pick the quantiles of crim
+bins <- quantile(boston_scaled$crim)
+# create label names
+crim_lab <- c("low", "med_low", "med_high", "high")
+# create new factor variable
+crime <- cut(boston_scaled$crim, breaks = bins, include.lowest = TRUE, labels = crim_lab)
+# add the new variable to the data frame and remove the old one
+boston_scaled$crime <- crime
+boston_scaled <- boston_scaled %>%
+  select(-crim)
+# summary of the new variable
+table(boston_scaled$crime)
+
+'# draw a bar plot of the variable in the new data set
+boston_scaled %>%
+  select(-crime) %>%
+  gather() %>%
+  ggplot(aes(value)) + 
+  facet_wrap("key", scales = "free") +
+  geom_histogram()'
+
+# pick the number of total observations in the data
+n <- nrow(boston_scaled)
+# take a sample of 80% observations; i.e. pick randomly row numbers between 1 and 0.8 x rows
+train_indexes <- sample(n, size = n * 0.8)
+# create the training set by using the defined indexes for rows
+train_set <- boston_scaled[train_indexes,]
+# create the testing set by excluding the row used for training set
+test_set <- boston_scaled[-train_indexes,]
+```
+
 
 ## 4.4 Linear discriminant analysis 
 
 *Fit the linear discriminant analysis on the train set. Use the categorical crime rate as the target variable and all the other variables in the dataset as predictor variables. Draw the LDA (bi)plot.*
+
+```{r}
+
+
+```
 
 ## Parts 5., 6. and the rest
