@@ -113,7 +113,7 @@ test_set <- boston_scaled[-train_indexes,]
 
 *Fit the linear discriminant analysis on the train set. Use the categorical crime rate as the target variable and all the other variables in the dataset as predictor variables. Draw the LDA (bi)plot.*
 
-Relating this there was multiple errors and the video was not available in the Datacamp exercises. I found the instructions also rather poor. The book wasn't much of help for this LDA either. Anycase, let's fit the LDA and use 'crime' variable as the target variable and all the other variables as predictors. Below I show the results in a table and in a biplot. Luckily no interpretation were asked for relating this task.
+Relating this there was multiple errors and the video was not available in the Datacamp exercises. I found the instructions also rather poor. The book wasn't much of help for this LDA either. Anycase, let's fit the LDA and use 'crime' variable as the target variable and all the other variables as predictors. Below I show the results in a table and in a biplot. No interpretation were asked regarding this in the instructions, so none provided.
 
 
 ```{r}
@@ -158,7 +158,9 @@ boston_scaled <- Boston %>%
   scale() %>%
   as.data.frame()
 
-
-
+dist_euc <- dist(boston_scaled, method = "euclidean")
+summary(dist_euc)
 ```
+
+Here I reloaded the Boston data and recreated a new data set, in which the variables are standardized to be able to compare the distances. Next, I calculated the 'euclidean' distances between observations. The key values of the calculated distances are shown in the summary table above.
 
