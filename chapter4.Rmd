@@ -12,7 +12,7 @@ date()
 - For warming up I did first the data wrangling exercise (preparing the data for the 5th week exercise)
 - Next I started to read the related chapters and figuring out the DataCamp exercises (and their bugs)
 - Finally I did the RStudio exercises
-- This week's exercises were a bit annoying as I think the study materials did not provide adequate information to work with the exercises
+- I found this week's exercises a bit annoying and uninspiring as I think the study materials did not provide adequate information to work with the exercises or interpret the results
 
 ## 4.1 Data
 ```{r message=FALSE, warning=FALSE}
@@ -144,7 +144,7 @@ table(correct = correct_cases, predicted = lda.predict$class)
 
 ## 4.5 K-means clustering 
 
-*Reload the Boston dataset and standardize the dataset (we did not do this in the Datacamp exercises, but you should scale the variables to get comparable distances). Calculate the distances between the observations. Run k-means algorithm on the dataset. Investigate what is the optimal number of clusters and run the algorithm again. Visualize the clusters (for example with the pairs() or ggpairs() functions, where the clusters are separated with colors) and interpret the results. (0-4 points)*
+Here I reloaded the Boston data and recreated a new data set, in which the variables are standardized to be able to compare the distances. Next, I calculate the 'euclidean' distances between observations. A summary of the calculated distances are shown in the table above. 
 
 ```{r}
 # clean the environment (i.e. data.frames and variables etc.)
@@ -160,7 +160,32 @@ boston_scaled <- Boston %>%
 
 dist_euc <- dist(boston_scaled, method = "euclidean")
 summary(dist_euc)
-```
 
-Here I reloaded the Boston data and recreated a new data set, in which the variables are standardized to be able to compare the distances. Next, I calculated the 'euclidean' distances between observations. The key values of the calculated distances are shown in the summary table above.
+```
+After that K-means clustering is conducted. First with three centers and then after examining the within cluster sum of squares (WCSS) K-means clustering is run again with two centers that was suggested by the results of the investigation of the WCSS. Below the results from two-center-clustering are visualized in the scatter plot matrices in which the clusters are colored; first plot shows all of the variables (which is quite useless) and then the three plots show parts of the big picture; all of them the two more or less distinct cluster are visible.
+
+```{r message=FALSE, warning=FALSE}
+
+# k-mean clustering with 4 centers
+km_boston <- kmeans(boston_scaled, centers = 3)
+
+# examination of WCSS, that is deciding optomal number of centers
+# set seed
+set.seed(123)
+# determine the number of clusters in the examination
+k_max <- 10
+# calculate the total WCSS
+twcss <- sapply(1:k_max, function(k){kmeans(boston_scaled, k)$tot.withinss})
+# visualize the results
+qplot(x = 1:k_max, y = twcss, geom = 'line')
+
+# examination of WCSS and the visualization suggest that two center would be optimal
+km_boston <- kmeans(boston_scaled, centers = 2)
+
+# visualze the k-mean clustering results
+pairs(boston_scaled, col = km_boston$cluster)
+pairs(boston_scaled[1:5], col = km_boston$cluster)
+pairs(boston_scaled[6:10], col = km_boston$cluster)
+pairs(boston_scaled[11:14], col = km_boston$cluster)
+```
 
