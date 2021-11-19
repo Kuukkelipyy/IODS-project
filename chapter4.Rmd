@@ -57,11 +57,13 @@ corrplot(cor_matrix, method = "circle", type = "upper", cl.pos = "r", tl.pos = "
 
 *Show a graphical overview of the data and show summaries of the variables in the data Describe and interpret the outputs, commenting on the distributions of the variables and the relationships between them* (CHECK)
 
-Summaries of the variables and the histograms presented above illustrates that the variables in the data set have really skewed distributions. The correlation matrix shows that many of variables are highly correlated. The correlation coefficients vary from 1 to -1. A positive coefficient indicate that high values of variable 'X' are associated with the high values of variable 'Y'. Respectively negative coefficient indicate that high values of 'X' are associated with low values of 'Y'.
+Summaries of the variables and the histograms presented above illustrates that the variables in the data set have skewed distributions and the variable also have quite different scales compared to each other. 
+
+The correlation matrix shows that many of variables are highly correlated. The correlation coefficients vary from 1 to -1. A positive coefficient indicate that high values of variable 'X' are associated with the high values of variable 'Y'. Respectively negative coefficient indicate that high values of 'X' are associated with low values of 'Y'.
 
 ## 4.3 Standardized dataset 
 
-First I'll scale the Boston data, that is standardize the variables and save it as a data.frame instead of a matrix. When variables are centered, their mean is adjusted to zero as can be seen from the summaries of the scaled variables which are shown below.
+First I'll scale the Boston data, that is standardize each variable by its scale and the standardized variables as a data.frame instead of a matrix. When variables are centered, their mean is adjusted to zero as can be seen from the summaries of the scaled variables which are shown below.
 
 After scaling the data, I will create a new factor variable from the 'crime rate per capita' variable and use the quantiles as cut points. A summary of the new 'crime' variable can be found below.
 
@@ -150,10 +152,12 @@ rm(list = ls())
 
 # reload the Boston dataset
 data(Boston)
+
 # scale the Boston data and transform the matrix to data.frame
 boston_scaled <- Boston %>%
   scale() %>%
   as.data.frame()
+
 
 
 ```
