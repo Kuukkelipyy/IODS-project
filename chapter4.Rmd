@@ -8,9 +8,9 @@ date()
 
 **_My fourth week in short_**
 
-- The week started by doing the peer-reviews. It was nice to see what other students have done!
+- The week started by doing the peer-reviews
 - For warming up I did first the data wrangling exercise (preparing the data for the 5th week exercise)
-- Next I started to read the related chapters and figuring out the DataCamp exercises (and their bugs)
+- Next I started to read the related chapters and figuring out the DataCamp exercises (and their bugs!)
 - Finally I did the RStudio exercises
 - I found this week's exercises a bit annoying and uninspiring as I think the study materials did not provide adequate information to work with the exercises or interpret the results
 
@@ -32,7 +32,7 @@ dim(Boston)
 
 ```
 
-The Boston data set utilized here includes 'Housing Values in Suburbs of Boston', that is different variables relating housing in the city of Boston. The data consists of 506 observations or 14 numeric (or integer) variables (i.e. 506 rows and 14 columns). Description of the variables can be seen from [the description of the data set](https://stat.ethz.ch/R-manual/R-devel/library/MASS/html/Boston.html)
+The Boston data set utilized here includes 'Housing Values in Suburbs of Boston', that is different variables relating housing in the city of Boston. The data consists of 506 observations of 14 numeric (or integer) variables (i.e. 506 rows and 14 columns). Description of the variables can be seen from [the description of the data set](https://stat.ethz.ch/R-manual/R-devel/library/MASS/html/Boston.html)
 
 ## 4.2 Overview of the Boston data
 
@@ -55,15 +55,13 @@ corrplot(cor_matrix, method = "circle", type = "upper", cl.pos = "r", tl.pos = "
 
 ```
 
-*Show a graphical overview of the data and show summaries of the variables in the data Describe and interpret the outputs, commenting on the distributions of the variables and the relationships between them* (CHECK)
+Summaries of the variables and the histograms presented above illustrate that the variables in the data set have quite skewed distributions and that the variables also have quite different scales compared to each other. 
 
-Summaries of the variables and the histograms presented above illustrates that the variables in the data set have skewed distributions and the variable also have quite different scales compared to each other. 
-
-The correlation matrix shows that many of variables are highly correlated. The correlation coefficients vary from 1 to -1. A positive coefficient indicate that high values of variable 'X' are associated with the high values of variable 'Y'. Respectively negative coefficient indicate that high values of 'X' are associated with low values of 'Y'.
+The correlation matrix shows that many of variables are highly correlated. The correlation coefficients vary from 1 to -1. A positive coefficient indicate that high values of variable 'X' are associated with the high values of variable 'Y'. Respectively negative coefficient indicates that high values of 'X' are associated with low values of 'Y'.
 
 ## 4.3 Standardized dataset 
 
-First I'll scale the Boston data, that is standardize each variable by its scale and the standardized variables as a data.frame instead of a matrix. When variables are centered, their mean is adjusted to zero as can be seen from the summaries of the scaled variables which are shown below.
+First I'll scale the Boston data, that is standardize each variable by its scale and save the standardized variables as a data.frame instead of a matrix. When variables are centered, their mean is adjusted to zero as can be seen from the summaries of the scaled variables which are shown below.
 
 After scaling the data, I will create a new factor variable from the 'crime rate per capita' variable and use the quantiles as cut points. A summary of the new 'crime' variable can be found below.
 
@@ -90,13 +88,6 @@ boston_scaled <- boston_scaled %>%
 # summary of the new variable
 table(boston_scaled$crime)
 
-'# draw a bar plot of the variable in the new data set
-boston_scaled %>%
-  select(-crime) %>%
-  gather() %>%
-  ggplot(aes(value)) + 
-  facet_wrap("key", scales = "free") +
-  geom_histogram()'
 
 # pick the number of total observations in the data
 n <- nrow(boston_scaled)
@@ -111,9 +102,7 @@ test_set <- boston_scaled[-train_indexes,]
 
 ## 4.4 Linear discriminant analysis (LDA)
 
-*Fit the linear discriminant analysis on the train set. Use the categorical crime rate as the target variable and all the other variables in the dataset as predictor variables. Draw the LDA (bi)plot.*
-
-Relating this there was multiple errors and the video was not available in the Datacamp exercises. I found the instructions also rather poor. The book wasn't much of help for this LDA either. Anycase, let's fit the LDA and use 'crime' variable as the target variable and all the other variables as predictors. Below I show the results in a table and in a biplot. No interpretation were asked regarding this in the instructions, so none provided.
+Relating this part of the exercise there was multiple problems with the DataCamp exercises and the video was not available. Anycase, let's fit the LDA and use 'crime' variable as the target variable and all the other variables as predictors. Below I show the results in a table and in a biplot. No interpretation were asked regarding this in the instructions, so none provided.
 
 
 ```{r}
@@ -144,7 +133,7 @@ table(correct = correct_cases, predicted = lda.predict$class)
 
 ## 4.5 K-means clustering 
 
-Here I reloaded the Boston data and recreated a new data set, in which the variables are standardized to be able to compare the distances. Next, I calculate the 'euclidean' distances between observations. A summary of the calculated distances are shown in the table above. 
+Here, I reloaded the Boston data and recreated a new data set, in which the variables are standardized to be able to compare the distances. Next, I calculate the 'euclidean' distances between observations. A summary of the calculated distances are shown in the table above. 
 
 ```{r}
 # clean the environment (i.e. data.frames and variables etc.)
@@ -189,3 +178,5 @@ pairs(boston_scaled[6:10], col = km_boston$cluster)
 pairs(boston_scaled[11:14], col = km_boston$cluster)
 ```
 
+
+**_THAT'S ALL FOR THIS TIME!_**
