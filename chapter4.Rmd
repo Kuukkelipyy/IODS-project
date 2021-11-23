@@ -83,12 +83,14 @@ crim_lab <- c("low", "med_low", "med_high", "high")
 crime <- cut(boston_scaled$crim, breaks = bins, include.lowest = TRUE, labels = crim_lab)
 # add the new variable to the data frame and remove the old one
 boston_scaled$crime <- crime
-boston_scaled <- select(boston_scaled, -crim)
+# NB: if dplyr is not defined below, error may occur when knitting index-file, because tries to use different package!
+boston_scaled <- dplyr::select(boston_scaled, -crim)
+## alternative way: boston_scaled <- subset(boston_scaled, select = -crim)
+
 # summary of the new variable
 table(boston_scaled$crime)
 
- # take a sample of 80% observations; i.e. pick randomly row numbers between 1 and 0.8 x rows
-
+# take a sample of 80% observations; i.e. pick randomly row numbers between 1 and 0.8 x rows
 # pick the number of total observations in the data
 n <- nrow(boston_scaled)
 # take a sample of 80% observations; i.e. pick randomly row numbers between 1 and 0.8 x rows
@@ -124,7 +126,9 @@ Next, I will save the observed frequencies of the crime categories from the test
 # save the crime variable separately
 correct_cases <- test_set$crime
 # remove crime variable from the test data
-test_set <- select(test_set, -crime)
+## MASS has also select() -> dplyr::select
+test_set <- dplyr::select(test_set, -crime)
+
 # use LDA model for predicting crime cases
 lda.predict <- predict(lda.fit, newdata = test_set)
 # cross tabulate the correct cased with predictions
