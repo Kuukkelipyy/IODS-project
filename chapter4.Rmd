@@ -12,7 +12,7 @@ date()
 - For warming up I did first the data wrangling exercise (preparing the data for the 5th week exercise)
 - Next I started to read the related chapters and figuring out the DataCamp exercises (and their bugs!)
 - Finally I did the RStudio exercises
-- I found this week's exercises a bit annoying and uninspiring as I think the study materials did not provide adequate information to work with the exercises or interpret the results
+- I found this week's exercises a bit annoying and uninspiring as I think the study materials did not provide adequate tools to work with the exercises or interpret the results
 
 ## 4.1 Data
 ```{r message=FALSE, warning=FALSE}
@@ -36,7 +36,7 @@ The Boston data set utilized here includes 'Housing Values in Suburbs of Boston'
 
 ## 4.2 Overview of the Boston data
 
-```{r}
+```{r message=FALSE}
 summary(Boston)
 
 # let's use gather from tidyr-package; gather returns key-value pairs of variables
@@ -67,7 +67,7 @@ After scaling the data, I will create a new factor variable from the 'crime rate
 
 Finally, I will split the scaled data into a training and testing data sets, which are then used in the next subchapter.
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 
 # scale the Boston data and transform the matrix to data.frame
 boston_scaled <- Boston %>%
@@ -83,11 +83,11 @@ crim_lab <- c("low", "med_low", "med_high", "high")
 crime <- cut(boston_scaled$crim, breaks = bins, include.lowest = TRUE, labels = crim_lab)
 # add the new variable to the data frame and remove the old one
 boston_scaled$crime <- crime
-boston_scaled <- boston_scaled %>%
-  select(-crim)
+boston_scaled <- select(boston_scaled, -crim)
 # summary of the new variable
 table(boston_scaled$crime)
 
+ # take a sample of 80% observations; i.e. pick randomly row numbers between 1 and 0.8 x rows
 
 # pick the number of total observations in the data
 n <- nrow(boston_scaled)
@@ -97,6 +97,7 @@ train_indexes <- sample(n, size = n * 0.8)
 train_set <- boston_scaled[train_indexes,]
 # create the testing set by excluding the row used for training set
 test_set <- boston_scaled[-train_indexes,]
+
 ```
 
 
@@ -179,4 +180,4 @@ pairs(boston_scaled[11:14], col = km_boston$cluster)
 ```
 
 
-**_THAT'S ALL FOR THIS TIME!_**
+**_THAT'S ALL!_**

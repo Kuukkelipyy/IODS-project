@@ -203,7 +203,7 @@ pre code {
 <pre class="r"><code># This is a so-called &quot;R chunk&quot; where you can write R code.
 
 date()</code></pre>
-<pre><code>## [1] &quot;Tue Nov 16 09:38:50 2021&quot;</code></pre>
+<pre><code>## [1] &quot;Tue Nov 23 09:38:18 2021&quot;</code></pre>
 <div id="some-thoughts" class="section level2">
 <h2>1.1 Some thoughts</h2>
 <p>I’m really excited to start this course. I expect to learn a lot of using R and RStudio.</p>
@@ -217,7 +217,7 @@ date()</code></pre>
 <div id="chapter-2-regression-and-model-validation" class="section level1">
 <h1>Chapter 2: Regression and model validation</h1>
 <pre class="r"><code>date()</code></pre>
-<pre><code>## [1] &quot;Tue Nov 16 09:38:50 2021&quot;</code></pre>
+<pre><code>## [1] &quot;Tue Nov 23 09:38:18 2021&quot;</code></pre>
 <p><strong>The second week in short:</strong></p>
 <ul>
 <li>I began by reading the suggested chapters 3 and 4 from the book <em>Multivariate Analysis for the Behavioral Sciences</em></li>
@@ -360,7 +360,7 @@ plot(model2, which = c(1,2, 5))</code></pre>
 <div id="chapter-3-logistic-regression" class="section level1">
 <h1>Chapter 3: Logistic regression</h1>
 <pre class="r"><code>date()</code></pre>
-<pre><code>## [1] &quot;Tue Nov 16 09:38:57 2021&quot;</code></pre>
+<pre><code>## [1] &quot;Tue Nov 23 09:38:24 2021&quot;</code></pre>
 <p><strong><em>My third week in short</em></strong></p>
 <ul>
 <li>I started the week’s work by reading the chapters 5 and 6 of the book <em>Multivariate Analysis for the Behavioral science</em></li>
@@ -619,7 +619,7 @@ nwrong_train</code></pre>
 crossvalid &lt;- cv.glm(data = alc, cost = loss_func, glmfit = model2, K = 10)
 # the mean prediction error for the testing data
 crossvalid$delta[1]</code></pre>
-<pre><code>## [1] 0.2351351</code></pre>
+<pre><code>## [1] 0.2378378</code></pre>
 <p>The mean error in the training data is 0.224. The mean prediction error for the testing data is around 0.24 in the 10-fold cross-validation. The mean prediction error in the Datacamp model was about 0.26, suggesting that the model presented here has slightly better test performance; i.e. the model is more accurate predicting the high consumption of alcohol.</p>
 </div>
 <div id="finding-more-parsimonious-model-super-bonus" class="section level3">
@@ -762,7 +762,7 @@ summary(model4)</code></pre>
 crossvalid2 &lt;- cv.glm(data = alc, cost = loss_func, glmfit = model4, K = 10)
 # the mean prediction error for the testing data
 crossvalid2$delta[1]</code></pre>
-<pre><code>## [1] 0.1918919</code></pre>
+<pre><code>## [1] 0.1972973</code></pre>
 <pre class="r"><code># visual
 probabilities_m4 &lt;- predict(model4, type = &quot;response&quot;)
 alc &lt;- mutate(alc, probability_m4 = probabilities_m4)
@@ -774,7 +774,6 @@ ggplot(alc, aes(x = probability_m4, y = high_use, col = prediction_m4)) +
 <p>The table above presents the summary of the fourth model. According to the 10-fold cross-validation, the mean prediction error for the testing data is around 0.20, suggesting that this model has better test performance than the model 3 examined above. The figure provides of graphical confirmation/evidence for this assumption. Moreover, the value of residual deviance (smaller) and the difference between null vs. residual deviance (bigger) suggest that this new model is better than the previous one.</p>
 <p><strong><em>Thanks for reading and for the upcoming feedback!</em></strong></p>
 <hr />
-<p>(more chapters to be added similarly as we proceed with the course!)</p>
 </div>
 </div>
 </div>
