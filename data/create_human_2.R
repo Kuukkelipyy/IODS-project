@@ -98,8 +98,7 @@ human <- select(human, -Country)
 # save the data to file
 write.table(human, "data/human.csv", sep = ";")
 
-
-# variables in the prepared data set:
+# Shorth description of variables in the prepared data set:
 '
 # Varibbles
 "Country" = Country name

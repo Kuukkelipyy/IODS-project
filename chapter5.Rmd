@@ -1,0 +1,160 @@
+# Chapter 5: Dimensionality reduction techniques
+
+
+```{r message=FALSE, warning=FALSE}
+date()
+
+library(dplyr)
+library(ggplot2)
+library(GGally)
+library(corrplot)
+library(tidyr)
+```
+
+**_My fifth week in short_**
+
+- The week started by doing the peer-reviews
+- Next, I did first the data wrangling exercise
+- After that I started to read the related chapters and figuring out the DataCamp exercises and working with the RStudio tasks at the same time
+
+## 5.1 Data
+
+The data set used here is drawn from Human Development Index and Gender Development Index. More information can be found from the [United Nations Development Programme's webpage](http://hdr.undp.org/en/content/human-development-index-hdi). The prepared data set examined here consists of 155 observations (that is countries) of 8 variables. 
+
+**_Description of the variables in the prepared data:_**
+
+- GNIperCap = Gross National Income per capita
+- LifeExp = Life expectancy at birth
+- ExpEdu = Expected years of schooling 
+- MatMortalityRate = Maternal mortality ratio
+- AdoBirthRate = Adolescent birth rate
+- FemalesParliament = Percetange of female representatives in parliament
+- SecondEduRatio = Proportion of females with at least secondary education / Proportion of males with at least secondary education
+- LabourRatio = Proportion of females in the labour force / Proportion of males in the labour force
+
+The structure of the data and summaries of the variables are shown below.
+
+```{r message=FALSE, warning=FALSE}
+# download the data
+human <- read.table("data/human.csv", sep = ";")
+
+str(human)
+summary(human)
+
+```
+The graphical overview of the data is presented below. The scatter plot matrix shows the distributions of the variables and illustrates their relationship. A better overview of the relationship between the variables is provided by the correlation matrix, which shows that many of the variables are highly correlated with each other. The correlation coefficients vary from 1 to -1. A positive coefficient indicate that high values of variable 'X' are associated with the high values of variable 'Y'. Respectively negative coefficient indicates that high values of 'X' are associated with low values of 'Y'.
+
+```{r message=FALSE, warning=FALSE}
+# scatter plot matrix using ggplot2 and GGally -packages
+ggpairs(human, lower = list(combo = wrap("facethist", bins = 20)))
+# correlation matrix
+cor(human) %>%
+  corrplot(method = "circle", type = "upper", cl.pos = "r", tl.cex = 0.8)
+
+```
+
+## 5.2 Principal Component Analysis 
+
+Next, I will perform principal component analysis (PCA) on the human data: first with unstandardized data and after that with standardized data set.
+
+### 5.2.1 Unstandardized data
+
+```{r message=FALSE, warning=FALSE}
+
+# PCA with SVD method (unstandardized data)
+pca_human_ustd <- prcomp(human)
+# summary of PCA results
+smry <- summary(pca_human_ustd)
+smry
+#rounded percentages of variance captured by each PC
+pca_pr <- round(1*smry$importance[2, ] * 100, digits = 2)
+# create object pc_lab (variance captured) to be used as axis labels
+pc_lab <- paste0(names(pca_pr), " (", pca_pr, "%)")
+
+# biplot of the resuts
+biplot(pca_human_ustd, 
+       choices = 1:2, 
+       cex = c(0.7, 0.9), 
+       col = c("black", "red"),
+       xlab = pc_lab[1], ylab = pc_lab[2])
+
+```
+
+The results from PCA performed with unstandardized data are shown above in the summary table and graphically in the biplot. They clearly show that the first principal component captures almost all variance (99.99%), which is due to the use of unstandardized data. PCA is sensitive to the relative scaling of the data and it assumes that variables with larger variance are more important than those with smaller variance, which is not the case here and, thus the data must be standardized before performing PCA.
+
+### 5.2.2 Standardized data
+*Standardize the variables in the human data and repeat the above analysis. Interpret the results of both analysis (with and without standardizing). Are the results different? Why or why not? Include captions (brief descriptions) in your plots where you describe the results by using not just your variable names, but the actual phenomenons they relate to*
+
+The results from PCA of standardized data are presented below. Now the first principal component captures about 54 percent of the variance and the second component about 16 percent. In the biplot the arrows can be interpreted as follows:
+
+- the angle between the arrows illustrates the correlation between the variables
+- the angle between a variable and a PC axis illustrate the correlation between the them
+- the length of the arrow is a proportional to the standard deviation of the variable
+
+From the figure one can note, for instance, that lower life expectancy, lower expected education, lower and worse gender ratio in the secondary education are all highly 'positively' correlated with each other as well as is higher maternal mortality with higher adolescence birth rate. The figure also shows high negative correlations, such as between maternal mortality and GNI. All these above mentioned features are contributing to the first principal component. The vertical arrows illustrates that the share of women in the parliament correlates with more 'equal' labor ratio between the genders (these features are contributing to the second principal component).
+
+```{r message=FALSE, warning=FALSE}
+# standardize the human data and save it as data frame
+human_std <- as.data.frame(scale(human))
+# PCA with SVD method (standardized data)
+pca_human_std <- prcomp(human_std)
+# summary of PCA results
+smry_std <- summary(pca_human_std)
+
+#rounded percentages of variance captured by each PC
+pca_pr_std <- round(1*smry_std$importance[2, ] * 100, digits = 2)
+# create object pc_lab (variance captured) to be used as axis labels
+pc_lab_std <- paste0(names(pca_pr_std), " (", pca_pr_std, "%)")
+
+# biplot of the resuts
+biplot(pca_human_std, 
+       choices = 1:2, 
+       cex = c(0.5, 0.7), 
+       col = c("black", "red"),
+       xlab = pc_lab_std[1], ylab = pc_lab_std[2])
+
+```
+
+
+## 5.3 Multiple Correspondence Analysis 
+
+The 'tea' data used here consists of 300 observations of 36 variables. I do not see any reason for visualizing the whole data set, so I just don't do it. Instead, I pick a few of the variables. The summary and visualization of the subset is shown below.
+
+```{r message=FALSE, warning=FALSE}
+
+
+# load the data set from FactoMineR-package
+library(FactoMineR)
+data("tea")
+# explore the data
+str(tea)
+
+# select a few colums and create a new data set
+keep_vars <- c("Tea", "How", "how", "sugar", "where", "lunch")
+keep_vars2 <- c("Tea", "how", "where")
+tea_time <- select(tea, one_of(keep_vars))
+# structure and summary of the new dataset
+summary(tea_time)
+str(tea_time)
+#visualization of the new data set
+gather(tea_time) %>% ggplot(aes(value)) + 
+  facet_wrap("key", scales = "free") +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8))
+```
+
+Next, I will perform the Multiple Correspondence Analysis (MCA). The visualization of the results from MCA are shown below.
+
+```{r message=FALSE, warning=FALSE}
+# multiple correspondence analysis
+mca <- MCA(tea_time, graph = FALSE)
+# summary of the MCA model
+summary(mca)
+# plot the MCA results
+plot(mca, invisible=c("ind"), habillage = "quali", graph.type = "classic")
+
+
+```
+
+In the figure the variables are drawn on the first two dimensions. The distance between the categories provides a measure of their similarity. The vertical dimension relates, at least to some extent, to from where the tea is bought. Respectively, the horizontal dimension seems to be related to how the tea is consumed (e.g. tea bags, unpacked etc.). From the figure one can interpret, for example, that buying tea from a tea shop is closer to using unpacked tea than to using tea bags and similarly getting tea from a chain store is closer to using tea bags than to using unpacked tea.
+
