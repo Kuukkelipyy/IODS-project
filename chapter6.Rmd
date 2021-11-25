@@ -1,0 +1,27 @@
+# Chapter 6: Analysis of longitudinal data
+
+
+```{r message=FALSE, warning=FALSE}
+date()
+
+# packages in use
+library(dplyr)
+library(ggplot2)
+
+```
+
+## 5.1 Data
+
+```{r message=FALSE, warning=FALSE}
+date()
+
+```
+
+## 5.2 Something
+
+## 5.1 Data
+
+```{r message=FALSE, warning=FALSE}
+date()
+
+```
