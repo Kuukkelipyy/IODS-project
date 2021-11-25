@@ -11,12 +11,6 @@ library(corrplot)
 library(tidyr)
 ```
 
-**_My fifth week in short_**
-
-- The week started by doing the peer-reviews
-- Next, I did first the data wrangling exercise
-- After that I started to read the related chapters and figuring out the DataCamp exercises and working with the RStudio tasks at the same time
-
 ## 5.1 Data
 
 The data set used here is drawn from Human Development Index and Gender Development Index. More information can be found from the [United Nations Development Programme's webpage](http://hdr.undp.org/en/content/human-development-index-hdi). The prepared data set examined here consists of 155 observations (that is countries) of 8 variables. 
@@ -42,7 +36,7 @@ str(human)
 summary(human)
 
 ```
-The graphical overview of the data is presented below. The scatter plot matrix shows the distributions of the variables and illustrates their relationship. A better overview of the relationship between the variables is provided by the correlation matrix, which shows that many of the variables are highly correlated with each other. The correlation coefficients vary from 1 to -1. A positive coefficient indicate that high values of variable 'X' are associated with the high values of variable 'Y'. Respectively negative coefficient indicates that high values of 'X' are associated with low values of 'Y'.
+The graphical overview of the data is presented below. The scatter plot matrix shows the distributions of the variables and illustrates their relationship. A better overview of the relationship between the variables is provided by the correlation matrix, which shows that many of the variables are highly correlated with each other. The correlation coefficients vary from 1 to -1. A positive coefficient indicates that high values of variable 'X' are associated with the high values of variable 'Y'. Respectively negative coefficient indicates that high values of 'X' are associated with low values of 'Y'.
 
 ```{r message=FALSE, warning=FALSE}
 # scatter plot matrix using ggplot2 and GGally -packages
@@ -80,18 +74,17 @@ biplot(pca_human_ustd,
 
 ```
 
-The results from PCA performed with unstandardized data are shown above in the summary table and graphically in the biplot. They clearly show that the first principal component captures almost all variance (99.99%), which is due to the use of unstandardized data. PCA is sensitive to the relative scaling of the data and it assumes that variables with larger variance are more important than those with smaller variance, which is not the case here and, thus the data must be standardized before performing PCA.
+The results from PCA performed with unstandardized data are shown above in the summary table and graphically in the biplot. They clearly show that the first principal component captures (misleadingly) almost all variance (99.99%), which is due to the use of unstandardized data. PCA is sensitive to the relative scaling of the data and it assumes that variables with larger variance are more important than those with smaller variance, which is not the case here and, thus the data must be standardized before performing PCA.
 
 ### 5.2.2 Standardized data
-*Standardize the variables in the human data and repeat the above analysis. Interpret the results of both analysis (with and without standardizing). Are the results different? Why or why not? Include captions (brief descriptions) in your plots where you describe the results by using not just your variable names, but the actual phenomenons they relate to*
 
 The results from PCA of standardized data are presented below. Now the first principal component captures about 54 percent of the variance and the second component about 16 percent. In the biplot the arrows can be interpreted as follows:
 
 - the angle between the arrows illustrates the correlation between the variables
-- the angle between a variable and a PC axis illustrate the correlation between the them
+- the angle between a variable and a PC axis illustrate the correlation between the two
 - the length of the arrow is a proportional to the standard deviation of the variable
 
-From the figure one can note, for instance, that lower life expectancy, lower expected education, lower and worse gender ratio in the secondary education are all highly 'positively' correlated with each other as well as is higher maternal mortality with higher adolescence birth rate. The figure also shows high negative correlations, such as between maternal mortality and GNI. All these above mentioned features are contributing to the first principal component. The vertical arrows illustrates that the share of women in the parliament correlates with more 'equal' labor ratio between the genders (these features are contributing to the second principal component).
+From the figure one can notice, for instance, that GNI per capita, life expectancy, expected education and gender ratio in the secondary education are all highly 'positively' correlated with each other. Respectively, maternal mortality is positively correlated with adolescence birth rate and these two are negatively correlated with the variables mentioned in the previous sentence (e.g. maternal mortality is negatively correlated with life expectancy). Moreover, the figure illustrate that all these above mentioned features are contributing to the first principal component. Instead, the variables FemalesParliament and LabourRatio are contributing to the second principal component and the vertical arrows illustrate that the share of women in the parliament correlates positively with the labour ratio between the genders.
 
 ```{r message=FALSE, warning=FALSE}
 # standardize the human data and save it as data frame
@@ -132,7 +125,7 @@ str(tea)
 # select a few colums and create a new data set
 keep_vars <- c("Tea", "How", "how", "sugar", "where", "lunch")
 keep_vars2 <- c("Tea", "how", "where")
-tea_time <- select(tea, one_of(keep_vars))
+tea_time <- dplyr::select(tea, one_of(keep_vars))
 # structure and summary of the new dataset
 summary(tea_time)
 str(tea_time)
