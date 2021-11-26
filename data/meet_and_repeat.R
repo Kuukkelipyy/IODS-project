@@ -36,15 +36,17 @@ bprs$treatment <- factor(bprs$treatment)
 bprs$subject <- factor(bprs$subject)
 
 # convert bprs data from wide to long format
-## wide:
-## long: 
 bprs_long <-  bprs %>% 
   gather(key = weeks, value = bprs, -treatment, -subject)
 
 # Transform the values of 'weeks' variable: extract the number of week
-bprs_long <- mutate(bprs_long, weeks = as.integer(substr(weeks, 5,5)))
+bprs_long <- mutate(bprs_long, week = as.integer(substr(weeks, 5,5)))
 
-
+# let's take a look at the wide and long data sets
+glimpse(bprs_long)
+glimpse(bprs)
+## wide: every subject in a treatment group is one observation with multiple measurements over time (i.e. variables/columns; weeks)
+## long: every measurement is observation; every subject in a treatment group has total of 9 observations (one for every week/measurement)
 
 ################################################################################
 ################################################################################
