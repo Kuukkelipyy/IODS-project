@@ -49,7 +49,7 @@ glimpse(rats_long)
 
 ### 6.1.2 Graphical examination of the data
 
-First, I draw a plot for every observed rat; the plot shows measured weight (y-axis) over time (x-axis) for every rat (lines). Rats in every group have gained weight during the experiment, although the growth seems to be bigger in groups 2 and 3 compared to group 1. The plot also illustrates that in the beginning of the experiment (time 0) the rats differ from each other in terms of the weight and bigger rats are bigger throughout the experiment.. Rats in group one are much smaller than those in groups 2 and 3. Also there is one much bigger individual in the group 2. 
+First, I draw a plot for every observed rat; the plot shows measured weight (y-axis) over time (x-axis) for every rat (lines). Rats in every group have gained weight during the experiment, although the growth seems to be bigger in groups 2 and 3 compared to group 1. However, the plot also illustrates that in the beginning of the experiment (time 0) the rats differ from each other in terms of the weight and bigger rats are bigger throughout the experiment. Rats in group 1 are much smaller than those in the groups 2 and 3. Also there is one much bigger individual in the group 2. 
 
 ```{r message=FALSE, warning=FALSE}
 
@@ -62,7 +62,7 @@ ggplot(rats_long, aes(x = Time, y = Weight, linetype = ID, col = ID)) +
   scale_y_continuous(limits = c(min(rats_long$Weight), max(rats_long$Weight)))
 
 ```
-Next, I will standardize/center the weight variable and repeat the above-presented graphical examination. As the graph below shows the after standardizing the groups seem to differ from each other and the second group include an outlier. Interestingly the trend in weight gain does not seem to be as straightforward as in the previous plot, expecially regarding group 3.
+Next, I will standardize/center the weight variable and repeat the above-presented graphical examination. The graphical results are similar, although the trend in weight gain does not seem to be as straightforward as in the previous plot, especially regarding group 3.
 
 ```{r message=FALSE, warning=FALSE}
 
@@ -82,9 +82,10 @@ ggplot(rats_long, aes(x = Time, y = Weight_std, linetype = ID, col = ID)) +
 
 ```
 
-To get a better picture of the differences between the treatment groups I will next produce a graph showing average profiles for each group. The graph shows that means of wights of groups 2 and 3 clearly differs from the group 1. In addition, although there is some overlap between the groups 2 and 3 it seems that they do differ from each other as the standard errors do not overlap with the other group's means. This will be examined more together with removing the outlier.... 
+Following the instructions of this exercise I will next produce a graph showing average profiles for each group to get a better picture of the differences between the treatment groups. Although I have to say, that with this data, it would be more interesting to examine whether the change in gaining weights differs between the groups as the groups differ by the design of the study.
 
-Although it would be more interesting to examine whether the change in weights differs between the groups... I do not see why to examine whether the groups differ because they differ by the design of the study!
+Anyways, the graph shows that means of weights of groups 2 and 3 clearly differs from the group 1. In addition, although there is some overlap between the groups 2 and 3 it seems that they do differ from each other as the standard errors do not overlap with the other group's means. 
+
 
 ```{r message=FALSE, warning=FALSE}
 
@@ -107,6 +108,50 @@ ggplot(rats_long_s , aes(x = Time, y = mean, linetype = Group, shape = Group, co
   geom_errorbar(aes(ymin=mean-se, ymax=mean+se, linetype="1"), width=0.3) +
   theme(legend.position = c(0.9,0.45)) +
   scale_y_continuous(name = "mean(weight) +/- se(weight)")
+
+```
+
+I will continue the summary approach and look into the post treatment values of the weight. The mean of the all weeks' weight will be our summary measure. Day 1 will be considered here as the baseline and it is excluded from the examination asI guess we are supposed to do. 
+
+```{r}
+# Create a summary data by group and subject with mean as the summary variable (ignoring baseline day 1).
+rats_summary <- rats_long %>%
+  filter(Time > 0) %>%
+  group_by(Group, ID) %>%
+  summarise( mean=mean(Weight) ) %>%
+  ungroup()
+
+# Draw a boxplot of the mean versus group
+ggplot(rats_summary, aes(x = Group, y = mean)) +
+  geom_boxplot() +
+  stat_summary(fun = "mean", geom = "point", shape=23, size=4, fill = "white") +
+  scale_y_continuous(name = "mean(Weight), days 8-64")
+
+```
+The box plots presented above shows again that the groups differ from each other and also that every group has an outlier, although only in the case of group two the outlier is quite far from the other means. Thus, I will remove the outlier of group 2 and draw the box plots again. 
+
+```{r message=FALSE, warning=FALSE}
+rats_summary_filt <- rats_summary %>%
+  filter(mean < 550)
+
+# Draw a boxplot of the mean versus group
+ggplot(rats_summary_filt, aes(x = Group, y = mean)) +
+  geom_boxplot() +
+  stat_summary(fun = "mean", geom = "point", shape=23, size=4, fill = "white") +
+  scale_y_continuous(name = "mean(Weight), days 8-64")
+```
+
+After removing the outlier, the differences between groups are even clearer as can be seen in the picture above. Nevertheless, let's apply a Hotelling’s T-test to investigate hte difference between the groups. Hostelling's t-test can be used when there are more than two groups, which is the case here ([see chapter 18 of MABS](https://mooc.helsinki.fi/pluginfile.php/192850/course/section/7333/MABS4IODS-Part4.pdf). HOW?
+
+[hotelling's package](https://cran.r-project.org/web/packages/Hotelling/Hotelling.pdf)
+
+, and also calculate a confidence interval for the differences difference. For t-test I will use the data without the one outlier. 
+
+```{r message=FALSE, warning=FALSE}
+
+
+# Perform a two-sample t-test
+t.test(mean ~ Group, data = rats_summary_filt, var.equal = TRUE)
 
 ```
 
