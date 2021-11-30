@@ -166,10 +166,6 @@ htest4 <- hotelling.test(mean ~ Group, data = rats_summary_filt, pair = c(2,3), 
 htest4
 
 
-hstat <- hotelling.stat(mean ~ Group, data = rats_summary_filt)
-
-hstat 
-
 ```
 
 ## 6.2 BPRS
