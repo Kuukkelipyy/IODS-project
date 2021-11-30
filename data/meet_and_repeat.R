@@ -73,6 +73,9 @@ glimpse(rats)
 ## Group is the treatment group; rats were divided into 3 groups with different diets
 ## rest of the variables are the weight measurements conducted during the experiment
 
+# save rats data in wide form
+write.table(rats, "data/rats_wide.csv", sep = ";")
+
 # transform the data from wide to long format
 rats_long <- rats %>%
   gather(key = WD, value = Weight, -ID, -Group) %>%
