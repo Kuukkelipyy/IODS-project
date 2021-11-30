@@ -18,10 +18,13 @@ In this subchapter I will implement the analyses of Chapter 8 of MABS using the 
 
 ### 6.1.1 Data
 
-The original RATS data included 16 observations of 13 variables, that is 16 rats with multiple measurements over time (and a few other variables). Here, the data is transformed from wide to long format by time (measurements), meaning that each time point (i.e. measurement) is one observation and thus every rat has as many observations as there are measurements. In the long format there are 176 observations of 4 variables, which are:
+The RATS data utilized here is drawn from a nutrition study conducted with rats ([see Crowder & Hand 1990](https://www.routledge.com/Analysis-of-Repeated-Measures/Crowder-Hand/p/book/9780367450847)). In the experiment the rats were grouped into three groups which had different diets, and each rats’s weight (grams) was recorded repeatedly over a 9-week
+period (about weekly, with an exception of week seven when two measurement were taken). 
+
+The original RATS data included 16 observations of 13 variables, that is 16 rats with multiple measurements over time (and a few other variables). Here, the data is transformed from wide to long format by time (measurements), meaning that each time point (i.e. measurement) is forms an observation and, thus, every individual rat has as many observations as there are measurements. Thererore, in the long format there are 176 observations of 4 variables, which are:
 
 - ID: unique id of participants (rats)
-- Group: the treatment group; rats were grouped into 3 groups with different diets (8 rats in group 1 and 4 in groups 2 and 3)
+- Group: the treatment groups 1,2 and 3
 - Weight: rats' weight in grams
 - Time: time point (days) of the weight measurement
 
