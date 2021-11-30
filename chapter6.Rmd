@@ -141,17 +141,34 @@ ggplot(rats_summary_filt, aes(x = Group, y = mean)) +
   scale_y_continuous(name = "mean(Weight), days 8-64")
 ```
 
-After removing the outlier, the differences between groups are even clearer as can be seen in the picture above. Nevertheless, let's apply a Hotelling’s T-test to investigate hte difference between the groups. Hostelling's t-test can be used when there are more than two groups, which is the case here ([see chapter 18 of MABS](https://mooc.helsinki.fi/pluginfile.php/192850/course/section/7333/MABS4IODS-Part4.pdf). HOW?
+### Statistical tests for differences
 
-[hotelling's package](https://cran.r-project.org/web/packages/Hotelling/Hotelling.pdf)
-
-, and also calculate a confidence interval for the differences difference. For t-test I will use the data without the one outlier. 
+After removing the outlier, the differences between groups are even clearer as can be seen in the picture above. Here, I have to improvise as it is impossible to conduct same analyses that were implemented in the Datacamp exercise (T-test). I apply a Hotelling’s test to investigate the difference between groups. Hotelling's t-test can be used when there are more than two groups, which is the case here ([see chapter 18 of MABS](https://mooc.helsinki.fi/pluginfile.php/192850/course/section/7333/MABS4IODS-Part4.pdf). I found a Hotelling packege that include the test: see documentation on [Hotelling's package](https://cran.r-project.org/web/packages/Hotelling/Hotelling.pdf). I'm not sure if that is the right one, but it is my best guess. The test results show that all the groups' means are statistically significantly different from each other.
 
 ```{r message=FALSE, warning=FALSE}
+# Access to Hotelling package
+library(Hotelling)
+
+# Hotelling's t-test
+htest <- hotelling.test(mean ~ Group, data = rats_summary_filt, var.equal = TRUE)
+htest 
+
+# test between groups 1 and 2
+htest2 <- hotelling.test(mean ~ Group, data = rats_summary_filt, pair = c(1,2), var.equal = TRUE)
+htest2
+
+# test between groups 1 and 3
+htest3 <- hotelling.test(mean ~ Group, data = rats_summary_filt, pair = c(1,3), var.equal = TRUE)
+htest3
+
+# test between groups 2 and 3
+htest4 <- hotelling.test(mean ~ Group, data = rats_summary_filt, pair = c(2,3), var.equal = TRUE)
+htest4
 
 
-# Perform a two-sample t-test
-t.test(mean ~ Group, data = rats_summary_filt, var.equal = TRUE)
+hstat <- hotelling.stat(mean ~ Group, data = rats_summary_filt)
+
+hstat 
 
 ```
 
