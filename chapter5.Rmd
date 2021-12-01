@@ -124,7 +124,6 @@ str(tea)
 
 # select a few colums and create a new data set
 keep_vars <- c("Tea", "How", "how", "sugar", "where", "lunch")
-keep_vars2 <- c("Tea", "how", "where")
 tea_time <- dplyr::select(tea, one_of(keep_vars))
 # structure and summary of the new dataset
 summary(tea_time)
