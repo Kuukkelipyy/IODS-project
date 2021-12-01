@@ -47,7 +47,7 @@ head(rats_long)
 glimpse(rats_long)
 ```
 
-### 6.1.2 Graphical examination of the data
+### 6.1.2 Graphical examination of the group based differences
 
 First, I draw a plot for every observed rat; the plot shows measured weight (y-axis) over time (x-axis) for every rat (lines). Rats in every group have gained weight during the experiment, although the growth seems to be bigger in groups 2 and 3 compared to group 1. However, the plot also illustrates that in the beginning of the experiment (time 0) the rats differ from each other in terms of the weight and bigger rats are bigger throughout the experiment. Rats in group 1 are much smaller than those in the groups 2 and 3. Also there is one much bigger individual in the group 2. 
 
@@ -59,7 +59,9 @@ ggplot(rats_long, aes(x = Time, y = Weight, linetype = ID, col = ID)) +
   scale_linetype_manual(values = rep(1:8, times=4)) + #what this does?
   facet_grid(. ~ Group, labeller = label_both) +
   theme(legend.position = "none") + 
-  scale_y_continuous(limits = c(min(rats_long$Weight), max(rats_long$Weight)))
+  scale_y_continuous(limits = c(min(rats_long$Weight), max(rats_long$Weight))) +
+  ggtitle("Individual weight profiles over time by group for the RATS data") +
+  xlab("Time (days)")
 
 ```
 Next, I will standardize/center the weight variable and repeat the above-presented graphical examination. The graphical results are similar, although the trend in weight gain does not seem to be as straightforward as in the previous plot, especially regarding group 3.
@@ -78,14 +80,14 @@ ggplot(rats_long, aes(x = Time, y = Weight_std, linetype = ID, col = ID)) +
   scale_linetype_manual(values = rep(1:8, times=4)) + #what this does?
   facet_grid(. ~ Group, labeller = label_both) +
   theme(legend.position = "none") + 
-  scale_y_continuous(name = "Standardized weight")
+  scale_y_continuous(name = "Standardized weight") +
+  ggtitle("Individual weight profiles over time by group for the RATS data after standardization") +
+  xlab("Time (days)")
+
 
 ```
 
-Following the instructions of this exercise I will next produce a graph showing average profiles for each group to get a better picture of the differences between the treatment groups. Although I have to say, that with this data, it would be more interesting to examine whether the change in gaining weights differs between the groups as the groups differ by the design of the study.
-
-Anyways, the graph shows that means of weights of groups 2 and 3 clearly differs from the group 1. In addition, although there is some overlap between the groups 2 and 3 it seems that they do differ from each other as the standard errors do not overlap with the other group's means. 
-
+To get a better picture of the weight gain and the differences between the groups, I will next produce a graph showing average profiles for each group. Additionally I draw a graph showing side-by-side box plots of the observations at each time point. The graphs illustrate that rats in every groups gain weight over time, although the weight gain is somewhat different in different groups. Figures also shoet that the mean of weights of groups 2 and 3 clearly differs from the group 1. In addition, although there is some overlap between the groups 2 and 3 it seems that they do differ from each other. Moreover, the box plots suggest the presence of multiple possible outliers at a number of time points.
 
 ```{r message=FALSE, warning=FALSE}
 
@@ -107,7 +109,18 @@ ggplot(rats_long_s , aes(x = Time, y = mean, linetype = Group, shape = Group, co
   scale_shape_manual(values = c(1,2,3)) +
   geom_errorbar(aes(ymin=mean-se, ymax=mean+se, linetype="1"), width=0.3) +
   theme(legend.position = c(0.9,0.45)) +
-  scale_y_continuous(name = "mean(weight) +/- se(weight)")
+  scale_y_continuous(name = "mean(weight) +/- se(weight)") +
+  xlab("Time (days)") +
+  ggtitle("Mean response profiles for the three groups of rats in the RATS data")
+
+# Alternative mean profile figure: side-by-side box plots of the observations at each time point
+ggplot(rats_long, aes(x = as.factor(Time), y = Weight, fill = Group)) +
+  geom_boxplot(position = position_dodge(width = 0.9)) +
+  theme_bw() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(legend.position = c(0.9,0.4)) +
+  scale_x_discrete(name = "Time (days") +
+  ggtitle("Boxplots for the RATS data: weight over time")
+
 
 ```
 
@@ -129,7 +142,7 @@ ggplot(rats_summary, aes(x = Group, y = mean)) +
 
 ```
 
-The box plots presented above shows again that the groups differ from each other and also that every group has an outlier, although only in the case of group two the outlier is quite far from the other means. Thus, I will remove the outlier of group 2 and draw the box plots again. 
+The box plots presented above shows again that the groups differ from each other and also that every group has an outlier, although only in the case of group two the outlier is quite far from the other means. Thus, I will remove the outlier of group 2 and draw the box plots again. After removing the outlier, the differences between groups are even clearer as can be seen in the picture below. 
 
 ```{r message=FALSE, warning=FALSE}
 rats_summary_filt <- rats_summary %>%
@@ -142,36 +155,11 @@ ggplot(rats_summary_filt, aes(x = Group, y = mean)) +
   scale_y_continuous(name = "mean(Weight), days 8-64")
 ```
 
-### 6.1.3 Statistical tests for differences
+### 6.1.3 Statistical examination of the group-based differences
 
-After removing the outlier, the differences between groups are even clearer as can be seen in the picture above. Here, I have to improvise as it is impossible to conduct same analyses that were implemented in the Datacamp exercise (Student's t-test). Hotelling's t-test can be used when there are more than two groups([see chapter 18 of MABS](https://mooc.helsinki.fi/pluginfile.php/192850/course/section/7333/MABS4IODS-Part4.pdf), which is the case here and, thus, I apply Hotelling’s test to investigate whether the differences between groups are statistically significant. I found Hotelling package which includes the test as well (see documentation on [Hotelling's package](https://cran.r-project.org/web/packages/Hotelling/Hotelling.pdf)). I admit, that I'm not not sure if that is the right one to use here, but it is my best guess. The results presented below show that not surprisingly all the groups' means are statistically significantly different from each other.
+Next, I will first add the baseline measurement (day 1) from the original data to the summary data and then utilize it in fitting a linear model in which the mean is the response variable. When taking the baseline into account results are surprisingly quite different! According to the results from the linear regression model the coefficient of group 2 or 3 are not statistically significant (when considering p<.05 as the threshold). Analysis of variance provides similar results.
 
-```{r message=FALSE, warning=FALSE}
-# Access to Hotelling package
-library(Hotelling)
-
-# Hotelling's t-test
-htest <- hotelling.test(mean ~ Group, data = rats_summary_filt, var.equal = TRUE)
-htest 
-
-# test between groups 1 and 2
-htest2 <- hotelling.test(mean ~ Group, data = rats_summary_filt, pair = c(1,2), var.equal = TRUE)
-htest2
-
-# test between groups 1 and 3
-htest3 <- hotelling.test(mean ~ Group, data = rats_summary_filt, pair = c(1,3), var.equal = TRUE)
-htest3
-
-# test between groups 2 and 3
-htest4 <- hotelling.test(mean ~ Group, data = rats_summary_filt, pair = c(2,3), var.equal = TRUE)
-htest4
-
-
-```
-
-Next, I will firs add the baseline measurement (day 1) from original data to the summary data and then utilize it in fitting a linear model in which the mean is the response variable. When taking the baseline into account results are quite different! According to the results from the linear regression model the coefficient of group 2 or 3 are not statistically significant. Analysis of variance provides similar results.
-
-TSEKKAA KIRJAN JA DATACAMPIN SEPUSTUKSIA... MENEEKÖ NÄMÄ VITUIKS?
+**HERE some interpretation**
 
 ```{r message=FALSE, warning=FALSE}
 
