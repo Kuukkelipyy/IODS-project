@@ -5,7 +5,7 @@
 
 # Introduction to Open Data Science 2021:
 ## RStudio Exercise 5: Data wrangling
-## week 4 data wrangling exercise: rows 22-61
+## week 4 data wrangling exercise: rows 22-62
 
 ## Data sets used here:
 ### 1) Human development index (HDI) data
@@ -77,7 +77,6 @@ human$GNIperCap <- str_replace(human$GNIperCap, pattern = ",", replace = "") %>%
   as.numeric()
 
 # Select the variables instructed
-## it is really stupid that in the last wrangling exercise it was instructed to rename the variables as wished!
 human <- human %>%
   select(Country, GNIperCap, LifeExp, ExpEdu, MatMortalityRate, AdoBirthRate,
          FemalesParliament, LabourRatio, SecondEduRatio)
@@ -98,9 +97,8 @@ human <- select(human, -Country)
 # save the data to file
 write.table(human, "data/human.csv", sep = ";")
 
-# Shorth description of variables in the prepared data set:
 '
-# Varibbles
+# Varibbles in the preparerd data set:
 "Country" = Country name
 "GNIperCap" = Gross National Income per capita
 "LifeExp" = Life expectancy at birth
@@ -110,9 +108,7 @@ write.table(human, "data/human.csv", sep = ";")
 "FemalesParliament" = Percetange of female representatives in parliament
 "SecondEduRatio" = Edu2.F / Edu2.M
 "LabourRatio" = Labo2.F / Labo2.M
-
 '
-
 ################################################################################
 ################################################################################
 ######################### THAT'S ALL DOCS! #####################################
