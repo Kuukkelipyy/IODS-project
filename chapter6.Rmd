@@ -64,6 +64,7 @@ ggplot(rats_long, aes(x = Time, y = Weight, linetype = ID, col = ID)) +
   xlab("Time (days)")
 
 ```
+
 Next, I will standardize/center the weight variable and repeat the above-presented graphical examination. The graphical results are similar, although the trend in weight gain does not seem to be as straightforward as in the previous plot, especially regarding group 3.
 
 ```{r message=FALSE, warning=FALSE}
@@ -124,7 +125,7 @@ ggplot(rats_long, aes(x = as.factor(Time), y = Weight, fill = Group)) +
 
 ```
 
-I will continue the summary approach and look into the post treatment values of the weight. The mean of the all weeks' weight will be our summary measure. Day 1 will be considered here as the baseline and it is excluded from the examination asI guess we are supposed to do. 
+I will continue the summary approach and look into the post treatment values of the weight. The mean of the all weeks' weight will be the summary measure. Day 1 will be considered here as the baseline and it is excluded from the examination asI guess we are supposed to do. 
 
 ```{r}
 # Create a summary data by group and subject with mean as the summary variable (ignoring baseline day 1).
