@@ -16,14 +16,13 @@ In this subchapter I will implement the analyses of Chapter 8 of MABS using the 
 
 ### 6.1.1 Data
 
-The RATS data utilized here is drawn from a nutrition study conducted with rats ([see Crowder & Hand 1990](https://www.routledge.com/Analysis-of-Repeated-Measures/Crowder-Hand/p/book/9780367450847)). In the experiment the rats were grouped into three groups which had different diets, and each rats’s weight (grams) was recorded repeatedly over a 9-week
-period (about weekly, with an exception of week seven when two measurement were taken). 
+The RATS data utilized here is drawn from a nutrition study conducted with rats ([see Crowder & Hand 1990](https://www.routledge.com/Analysis-of-Repeated-Measures/Crowder-Hand/p/book/9780367450847)). In the experiment the rats were grouped into three groups which had different diets, and each rat's weight (grams) was recorded weekly over a 9-week period (with an exception of week seven when two measurements were taken). 
 
-The original RATS data included 16 observations of 13 variables, that is 16 rats with multiple measurements over time (and a few other variables). Here, the data is transformed from wide to long format by time (measurements), meaning that each time point (i.e. measurement) is forms an observation and, thus, every individual rat has as many observations as there are measurements. Thererore, in the long format there are 176 observations of 4 variables, which are:
+The original RATS data included 16 observations of 13 variables, that is 16 rats with multiple measurements over time (and a few other variables). Here, the data is transformed from wide to long format by time (measurements), meaning that each time point (i.e. measurement) forms an observation and, thus, every individual rat has as many observations as there are measurements. Thererore, in the long format there are 176 observations of 4 variables, which are:
 
 - ID: unique id of participants (rats)
-- Group: the treatment groups 1,2 and 3
-- Weight: rats' weight in grams
+- Group: the treatment groups 1, 2 and 3
+- Weight: rat's weight in grams
 - Time: time point (days) of the weight measurement
 
 NB: The variable 'WD' is removed from the data set as its information is already included in the 'Time' variable and thus there is no use for it. In addition, ID and Group variables are transformed to factors.
@@ -86,7 +85,7 @@ ggplot(rats_long, aes(x = Time, y = Weight_std, linetype = ID, col = ID)) +
 
 ```
 
-To get a better picture of the weight gain and the differences between the groups, I will next produce a graph showing average profiles for each group. Additionally I draw a graph showing side-by-side box plots of the observations at each time point. The graphs illustrate that rats in every groups gain weight over time, although the weight gain is somewhat different in different groups. Figures also shoet that the mean of weights of groups 2 and 3 clearly differs from the group 1. In addition, although there is some overlap between the groups 2 and 3 it seems that they do differ from each other. Moreover, the box plots suggest the presence of multiple possible outliers at a number of time points.
+To get a better picture of the weight gain and the differences between the groups, I will next produce a graph showing average profiles for each group. Additionally I draw a graph showing side-by-side box plots of the observations at each time point. The graphs illustrate that every group has gained weight over time, although the weight gain is a bit different in different groups. The figures also show that the mean weights of groups 2 and 3 clearly differ from group 1. In addition, although there is some overlap between the groups 2 and 3 profiles it seems that they do differ from each other. Moreover, the box plots suggest the presence of multiple possible outliers at a number of time points.
 
 ```{r message=FALSE, warning=FALSE}
 
@@ -123,7 +122,7 @@ ggplot(rats_long, aes(x = as.factor(Time), y = Weight, fill = Group)) +
 
 ```
 
-I will continue the summary approach and look into the post treatment values of the weight. The mean of the all weeks' weight will be the summary measure. Day 1 will be considered here as the baseline and it is excluded from the examination asI guess we are supposed to do. 
+I will continue the summary approach and look into the post-treatment values of the weight. The mean of the all weeks' weight will be the summary measure. Day 1 will be considered here as the baseline and it is excluded from the examination asI guess we are supposed to do. 
 
 ```{r}
 # Create a summary data by group and subject with mean as the summary variable (ignoring baseline day 1).
