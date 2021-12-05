@@ -1,6 +1,9 @@
 # Chapter 6: Analysis of longitudinal data
 
 - It would have been nice to be able to get more out of this weeks exercises and materials; it is easy to simply copy and modify the code, but I would like to learn much more
+- this weeks exercise have been pretty frustrating. Many times I have been wondering if I do not understand or is there just a mistake or some kind of shortage in the materials
+- The Datacamp nor the book adequately help to interpret the results from the mixed effect models
+- I really would have wanted to learn more about longitudinal methods
 
 ```{r message=FALSE, warning=FALSE}
 date()
@@ -158,9 +161,20 @@ ggplot(rats_summary_filt, aes(x = Group, y = mean)) +
 
 ### 6.1.3 Statistical examination of the group-based differences
 
-Next, I will first add the baseline measurement (day 1) from the original data to the summary data and then utilize it in fitting a linear model in which the mean is the response variable. When taking the baseline into account results are surprisingly quite different! According to the results from the linear regression model the coefficient of group 2 or 3 are not statistically significant (when considering p<.05 as the threshold). Analysis of variance provides similar results.
+Next, I will first fit a linear model with the mean weight as the response and group as explanatory variable. The results of the model are shown below.
 
-**HERE some interpretation**
+```{r message=FALSE, warning=FALSE}
+
+# Fit the linear model with the mean as the response and Group as explanatory
+fit <- lm(mean ~ Group, data = rats_summary)
+# summary of the fitted model
+summary(fit)
+# analysis of variance table for the fitted model 
+anova(fit)
+
+```
+
+As can be seen from the summary table above, the positive regression coefficients of both groups are statistically significant (p < 0.001), meaning that the weight of the rats differs between groups. Next, I will add the baseline measurement (day 1) from the original data to the summary data and add it in the linear regression model. The results are presented below.
 
 ```{r message=FALSE, warning=FALSE}
 
@@ -181,7 +195,7 @@ anova(fit)
 
 ```
 
-
+When taking the baseline into account results are quite different! According to the results from the linear regression model the coefficient of group 2 or 3 are not statistically significant (when considering p < 0.05 as the threshold). Analysis of variance provides similar results. 
 
 ## 6.2 BPRS
 
@@ -191,10 +205,172 @@ In this subchapter I will implement the analyses of Chapter 9 of MABS using the 
 
 ### 6.2.1 Data
 
+In this exercise I will use data taken from [Davis (2002)](https://link.springer.com/book/10.1007/b97287). The data is from an experimental study in which 40 males were randomly assigned to two treatment groups and each participant was rated
+on a psychiatric rating scale (BPRS) measured before the treatment started (week 0) and weekly after that for eight weeks. Here, the data is already transformed from wide to long form.
+
 ```{r message=FALSE, warning=FALSE}
 # load the data in long format
 bprs_long <- read.table("data/bprs_long.csv", sep = ";")
 
+# prepare data for the analysis
+## remove WD variable 
+## Group and ID -> factors
+bprs_long <- bprs_long%>%
+  select(-weeks) %>%
+  mutate(treatment = as.factor(treatment),
+         subject = as.factor(subject),
+         id = as.factor(id))
+
+str(bprs_long)
+summary(bprs_long)
+head(bprs_long)
 ```
 
-### 6.2.2 Something
+BPRS data include multiple measurements from 40 subjects. As the data is transformed from a wide to long format by time (measurements), each time point forms an observation and, thus, every participant has as many observations as there are measurements. Note that the numbering of the subjects/participants goes from 1 to 20 in both treatment groups, which is why I added a new id-variable into the data which goes from 1 to 40 identifying each participants. In the long form there are 360 observations of 5 variables, which are:
+
+- treatment: the treatment groups 1 and 2
+- subject: the id of participant in given treatment group (both groups have subjects from 1 to 20)
+- id: unique identifyier of participant
+- bprs: results of the measurement
+- week: time point (weeks) of the measurements
+
+NB: The variable 'weeks' is removed from the data set as its information is already included in the 'week' variable and thus there is no use for it. In addition, subject and treatment variables are transformed to factors.
+
+### 6.2.2 Graphical examination
+
+Let's first take brief graphical examination of the data! I'll begin by plotting the BPRS-ratings over time and identifying the treatment groups in which the observations belong while ignoring the longitudinal nature of the data (i.e. which subject's observations are in question). The below-presented plot shows a downward trend in the BPRS-scores, especially regarding the first treatment group.
+
+```{r message=FALSE, warning=FALSE}
+
+ggplot(bprs_long, aes(x = week, y = bprs, group = id, col = treatment)) + 
+  geom_text(aes(label = treatment)) + 
+  scale_x_continuous(name = "Time (week)", breaks = seq(0, 11, 1)) + 
+  scale_y_continuous(name = "BPRS") + 
+  theme_bw() + 
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  ggtitle("Plot of BPRS-scores over time. The treatment groups are identified by numbers and colors")
+
+```
+
+Next, I will take the longitudinal nature of the data into account and draw plot of individual BPRS profiles. The individual profiles show similar downward trend in the BPRS scores over time, although in the group 2 there seem to be more departures from this trend.
+
+The next figure, that is the scatter plot matrix, demonstrates that the repeated measures of BPRS are not independent of one another, which is no surprise when considering the longitudinal nature of the data.
+
+```{r message=FALSE, warning=FALSE}
+# Plot the RATSL data
+ggplot(bprs_long, aes(x = week, y = bprs, group = id, col = treatment)) +
+  geom_line(aes(linetype = treatment)) +
+  scale_x_continuous(name = "Time (weeks)", breaks = seq(0, 11, 1)) +
+  scale_y_continuous(name = "BPRS") +
+  theme_bw() + theme(legend.position = "top") +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  ggtitle("Plot of individual BPRS profiles")
+
+# load the data in wide form and draw a scatter plot matrix
+bprs_wide <- read.table("data/bprs_wide.csv", sep = ";")
+pairs(bprs_wide[, 3:11], cex = 0.7)
+```
+
+### 6.2.3 Regression modeling
+
+Now I will move to a more formal analyses and fit a linear regression model including BPRS scores as the response variable and two explanatory variables, namely time and treatment group. Note: the repeated-measures structure of the data is ignored in this model. The results (see below) show that estimate of time is statistical significant (p < 0.001), meaning that the BPRS scores decrease over time. However, the regression coefficient of treatment group is not significant indicating that the BPRS scores do not differ between the groups conditional on time.
+
+```{r message=FALSE, warning=FALSE}
+
+# fit random intercept model 
+bprs_m1 <- lm(bprs ~ week + treatment, data = bprs_long)
+summary(bprs_m1)
+
+```
+
+The independent model conducted above assumes an independence of the measures of the response variable (bprs), which is highly unlikely here. Thus, I will fit a random intercept model, which allows the linear regression fit for each participant to differ in intercept from other participants.
+
+```{r message=FALSE, warning=FALSE}
+
+# access to lme4-package that provide functions for fitting mixed models
+library("lme4")
+
+# to add p-values to the summary
+#install.packages("lmerTest")
+library(lmerTest)
+
+# note: in the formula the random-effects terms distinguished by vertical bars (|)
+bprs_rim1 <- lmer(bprs ~ week + treatment + (1 | id), data = bprs_long, REML = FALSE)
+
+# summary of the random intercept model
+summary(bprs_rim1)
+
+
+
+```
+
+The results from the random intercept model are presented above. The estimates of time (i.e. week) and treatment group are quite similar to those from the previous model; the estimate of time is statistically significant, while the treatment group is not. The estimated variance of the participant (id) random effects are pretty large (97.39), which indicate considerable variation in the intercepts of the regression fits of the individual BPRS profiles. Thus, I will next fit a random intercept and random slope model, which allows the linear regression fits for each individual to differ in slope as well. This way it is possible to detect the individual differences in the participants' BPRS profiles, and also the effect of time.
+
+Note that even though the significance of the results or coefficient is commented multiple times in the chapter 9, there are no p-values or explanations how to interpret the significance of the results, which I found very annoying. Here, I installed _lmerTest_-package which adds p-values to the lrm-summary tables.
+
+```{r message=FALSE, warning=FALSE}
+
+# random intercept and random slope model
+bprs_rim2 <- lmer(bprs ~ week + treatment + (week | id), data = bprs_long, REML = FALSE)
+
+# summary of the random intercept model
+summary(bprs_rim2)
+
+# anova
+anova(bprs_rim1, bprs_rim2)
+
+``` 
+
+The results from the random intercept and random slope model are presented above. The fixed effect estimate of time (i.e. week) is the same as in the random intercept model, but the fixed effect estimate of treatment group is bigger suggesting the difference between the treatment groups is larger.
+
+The likelihood ratio test for the two models gives a chi-squared statistic of 66.66 with 2 degrees of freedom, and the associated p-value is really small (p < 0.001), meaning that the random intercept and slope model provides a better fit for the data.
+
+Finally, I fit a random intercept and slope model that allows a interaction between treatment group and time. The results from this model are shown below. The results differ somewhat from the previous model, but more importantly the likelihood ratio test for the random intercept and slope model versus the random intercept and
+slope model with interaction term shows that the latter provides worse fit for the data, and thus the results are not interpret here any further.
+
+```{r message=FALSE, warning=FALSE}
+bprs_rim3 <- lmer(bprs ~ week * treatment + (week | id), data = bprs_long, REML = FALSE)
+
+summary(bprs_rim3)
+
+anova(bprs_rim2, bprs_rim3)
+
+```
+
+The last thing to do is to draw one more figure which shows the observed and fitted BPRS profiles. Based on the above presented results I will the random intercept and slope model without interaction term for fitted values. The two figures are presented below. They illustrate how well the model fits the observed data. Seems to fit somewhat roughly and there are also quite big differences between the observed and fitted lines, but everyone can take a look and make a judgement of their own.
+
+```{r message=FALSE, warning=FALSE}
+
+# create fitted data
+Fitted <- fitted(bprs_rim2)
+
+# add the fitted values to the data frame
+ bprs_long <- bprs_long %>%
+   mutate(Fitted = Fitted)
+
+graph1 <- ggplot(bprs_long , aes(x = week, y = bprs, group = id, col = treatment)) +
+  geom_line(aes(linetype = treatment)) +
+  scale_x_continuous(name = "Time (weeks)", breaks = seq(0, 11, 1)) +
+  scale_y_continuous(name = "BPRS") +
+  theme_bw() + theme(legend.position = "right") +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  ggtitle("Observed BPRS")
+
+graph2 <- ggplot(bprs_long , aes(x = week, y = Fitted, group = id, col = treatment)) +
+  geom_line(aes(linetype = treatment)) +
+  scale_x_continuous(name = "Time (weeks)", breaks = seq(0, 11, 1)) +
+  scale_y_continuous(name = "BPRS") +
+  theme_bw() + theme(legend.position = "right") +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  ggtitle("Fitted BPRS")
+
+library(ggpubr)
+ggarrange(graph1, graph2,
+          ncol = 2, nrow = 1, 
+          common.legend = TRUE, legend = "right")
+
+```
+
+THAT'S ALL FOLKS AND DOCS!
+
+

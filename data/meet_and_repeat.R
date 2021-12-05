@@ -32,9 +32,16 @@ summary(bprs)
 bprs$treatment <- factor(bprs$treatment)
 bprs$subject <- factor(bprs$subject)
 
+# I will create a new 'id' variable in the data set so that each subject has unique ID
+## this is because I do not understand how I could implement the analysis otherwise
+bprs$id <- seq.int(nrow(bprs))
+
+# save the data in wide format
+write.table(bprs, "data/bprs_wide.csv", sep = ";")
+
 # convert bprs data from wide to long format
 bprs_long <-  bprs %>% 
-  gather(key = weeks, value = bprs, -treatment, -subject)
+  gather(key = weeks, value = bprs, -treatment, -subject, -id)
 
 # Transform the values of 'weeks' variable: extract the number of week
 bprs_long <- mutate(bprs_long, week = as.integer(substr(weeks, 5,5)))
@@ -49,7 +56,7 @@ glimpse(bprs)
 ## thus, in wide format the data consists of 40 rows/observations and 11 variables
 ## and in long format 360 rows/observations (40 participants * 9 measurements) of 5 observations (of which 'weeks is the old varible of measurements, and its information is now split into 'week' and 'bprs' variables)
 
-# save the data in long format
+# save the data in long form
 write.table(bprs_long, "data/bprs_long.csv", sep = ";")
 
 #-------------------------------------------------------------------------------
