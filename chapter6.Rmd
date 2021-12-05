@@ -1,10 +1,5 @@
 # Chapter 6: Analysis of longitudinal data
 
-- It would have been nice to be able to get more out of this weeks exercises and materials; it is easy to simply copy and modify the code, but I would like to learn much more
-- this weeks exercise have been pretty frustrating. Many times I have been wondering if I do not understand or is there just a mistake or some kind of shortage in the materials
-- The Datacamp nor the book adequately help to interpret the results from the mixed effect models
-- I really would have wanted to learn more about longitudinal methods
-
 ```{r message=FALSE, warning=FALSE}
 date()
 
@@ -199,8 +194,6 @@ When taking the baseline into account results are quite different! According to 
 
 ## 6.2 BPRS
 
-*_Implement the analyses of Chapter 9 of MABS using the BPRS data. (0-8 points: 0-4 points for graphs or analysis results + 0-4 points for their interpretations)_*
-
 In this subchapter I will implement the analyses of Chapter 9 of MABS using the BPRS data.
 
 ### 6.2.1 Data
@@ -306,14 +299,14 @@ summary(bprs_rim1)
 
 The results from the random intercept model are presented above. The estimates of time (i.e. week) and treatment group are quite similar to those from the previous model; the estimate of time is statistically significant, while the treatment group is not. The estimated variance of the participant (id) random effects are pretty large (97.39), which indicate considerable variation in the intercepts of the regression fits of the individual BPRS profiles. Thus, I will next fit a random intercept and random slope model, which allows the linear regression fits for each individual to differ in slope as well. This way it is possible to detect the individual differences in the participants' BPRS profiles, and also the effect of time.
 
-Note that even though the significance of the results or coefficient is commented multiple times in the chapter 9, there are no p-values or explanations how to interpret the significance of the results, which I found very annoying. Here, I installed _lmerTest_-package which adds p-values to the lrm-summary tables.
+Note that even though the significance of the results or coefficient of the mixed effect models is commented multiple times in the chapter 9, there are no p-values or explanations how to interpret the significance of the results, which I found very annoying. Here, I installed _lmerTest_-package which adds p-values to the lrm-summary tables.
 
 ```{r message=FALSE, warning=FALSE}
 
 # random intercept and random slope model
 bprs_rim2 <- lmer(bprs ~ week + treatment + (week | id), data = bprs_long, REML = FALSE)
 
-# summary of the random intercept model
+# summary of the random intercept and slope model
 summary(bprs_rim2)
 
 # anova
@@ -329,15 +322,17 @@ Finally, I fit a random intercept and slope model that allows a interaction betw
 slope model with interaction term shows that the latter provides worse fit for the data, and thus the results are not interpret here any further.
 
 ```{r message=FALSE, warning=FALSE}
+
+# random intercept and random slope model with an interation term
 bprs_rim3 <- lmer(bprs ~ week * treatment + (week | id), data = bprs_long, REML = FALSE)
-
+# summary of the model
 summary(bprs_rim3)
-
+# anova
 anova(bprs_rim2, bprs_rim3)
 
 ```
 
-The last thing to do is to draw one more figure which shows the observed and fitted BPRS profiles. Based on the above presented results I will the random intercept and slope model without interaction term for fitted values. The two figures are presented below. They illustrate how well the model fits the observed data. Seems to fit somewhat roughly and there are also quite big differences between the observed and fitted lines, but everyone can take a look and make a judgement of their own.
+The very last thing to do is to draw one more figure which shows the observed and fitted BPRS profiles. Based on the above presented results I will use the random intercept and slope model without interaction term for fitted values. The two figures are presented below. They illustrate how well the model fits the observed data. Model seems to fit somewhat roughly and there are also quite big differences between the observed and fitted lines, but everyone can take a look and make a judgement of their own.
 
 ```{r message=FALSE, warning=FALSE}
 
@@ -371,6 +366,14 @@ ggarrange(graph1, graph2,
 
 ```
 
-THAT'S ALL FOLKS AND DOCS!
 
 
+**THAT'S** 
+
+*ALL* 
+*FOLKS*
+*AND* 
+*DOCS!*
+
+
+**THE END.**
