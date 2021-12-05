@@ -122,12 +122,12 @@ ggplot(rats_long, aes(x = as.factor(Time), y = Weight, fill = Group)) +
 
 ```
 
-I will continue the summary approach and look into the post-treatment values of the weight. The mean of the all weeks' weight will be the summary measure. Day 1 will be considered here as the baseline and it is excluded from the examination asI guess we are supposed to do. 
+I will continue the summary approach and look into the post-treatment values of the weight. The mean of weight (all weeks) will be the summary measure. Day 1 will be considered here as the baseline and it is excluded from the examination.
 
 ```{r}
 # Create a summary data by group and subject with mean as the summary variable (ignoring baseline day 1).
 rats_summary <- rats_long %>%
-  filter(Time > 0) %>%
+  filter(Time > 1) %>%
   group_by(Group, ID) %>%
   summarise( mean=mean(Weight) ) %>%
   ungroup()
@@ -136,11 +136,12 @@ rats_summary <- rats_long %>%
 ggplot(rats_summary, aes(x = Group, y = mean)) +
   geom_boxplot() +
   stat_summary(fun = "mean", geom = "point", shape=23, size=4, fill = "white") +
-  scale_y_continuous(name = "mean(Weight), days 8-64")
+  scale_y_continuous(name = "mean(Weight), days 8-64") +
+  ggtitle("Boxplots of mean summary measures for the three groups in RATS data")
 
 ```
 
-The box plots presented above shows again that the groups differ from each other and also that every group has an outlier, although only in the case of group two the outlier is quite far from the other means. Thus, I will remove the outlier of group 2 and draw the box plots again. After removing the outlier, the differences between groups are even clearer as can be seen in the picture below. 
+The box plots presented above shows again that the groups differ from each other and also that every group has an outlier, although only in the case of group two the outlier is quite far from the others. Thus, I will remove the outlier of group 2 and draw the box plots again. After removing the outlier, the differences between groups are even clearer as can be seen in the picture below. 
 
 ```{r message=FALSE, warning=FALSE}
 rats_summary_filt <- rats_summary %>%
@@ -150,12 +151,13 @@ rats_summary_filt <- rats_summary %>%
 ggplot(rats_summary_filt, aes(x = Group, y = mean)) +
   geom_boxplot() +
   stat_summary(fun = "mean", geom = "point", shape=23, size=4, fill = "white") +
-  scale_y_continuous(name = "mean(Weight), days 8-64")
+  scale_y_continuous(name = "mean(Weight), days 8-64") +
+  ggtitle("Boxplots of mean summary measures for the three groups in RATS data \n(without outlier)")
 ```
 
 ### 6.1.3 Statistical examination of the group-based differences
 
-Next, I will first fit a linear model with the mean weight as the response and group as explanatory variable. The results of the model are shown below.
+Next, I will first fit a linear model with the mean weight as the response and group as the only explanatory variable. The results of the model are shown below.
 
 ```{r message=FALSE, warning=FALSE}
 
@@ -168,7 +170,7 @@ anova(fit)
 
 ```
 
-As can be seen from the summary table above, the positive regression coefficients of both groups are statistically significant (p < 0.001), meaning that the weight of the rats differs between groups. Next, I will add the baseline measurement (day 1) from the original data to the summary data and add it in the linear regression model. The results are presented below.
+As can be seen from the summary table above, the positive regression coefficients of both groups are statistically significant (p < 0.001). Similarly, the analysis of variance (ANOVA) shows that the weight of the rats differ between the examined groups and that the result is highly significant (p < 0.001). Next, I will add the baseline measurement (day 1) from the original data to the summary data and include it as a covariate in the linear regression model. The results of the linear regression model and ANOVA are presented below.
 
 ```{r message=FALSE, warning=FALSE}
 
@@ -189,7 +191,7 @@ anova(fit)
 
 ```
 
-When taking the baseline into account results are quite different! According to the results from the linear regression model the coefficient of group 2 or 3 are not statistically significant (when considering p < 0.05 as the threshold). Analysis of variance provides similar results. 
+When taking the baseline into account results are quite different! According to the above presented results from the linear regression model, the coefficient of group 2 or 3 are not statistically significant (when considering p < 0.05 as the threshold). Analysis of variance provides similar results, indicating that the differences between the groups are not statistically significant when taking the baseline into account.
 
 ## 6.2 BPRS
 
