@@ -25,7 +25,7 @@ The original RATS data included 16 observations of 13 variables, that is 16 rats
 - Weight: rat's weight in grams
 - Time: time point (days) of the weight measurement
 
-NB: The variable 'WD' is removed from the data set as its information is already included in the 'Time' variable and thus there is no use for it. In addition, ID and Group variables are transformed to factors.
+*NB: The variable 'WD' is removed from the data set as its information is already included in the 'Time' variable and thus there is no use for it. In addition, ID and Group variables are transformed to factors.*
 
 ```{r message=FALSE, warning=FALSE}
 # load the data in long format
@@ -191,7 +191,7 @@ anova(fit)
 
 ```
 
-When taking the baseline into account results are quite different! According to the above presented results from the linear regression model, the coefficient of group 2 or 3 are not statistically significant (when considering p < 0.05 as the threshold). Analysis of variance provides similar results, indicating that the differences between the groups are not statistically significant when taking the baseline into account.
+When taking the baseline into account results are quite different! According to the above presented results from the linear regression model, the coefficient of group 2 or 3 are not statistically significant (when considering p < 0.05 as the threshold). Analysis of variance provides similar results, indicating that the differences between the groups are not statistically significant when taking the baseline into account. Although, naturally these are only preliminary results and, for instance, the longitudinal structure of the data is ignored. More sophisticated and proper analysis of the data can be found in the chapter 9 of MABS. 
 
 ## 6.2 BPRS
 
@@ -220,12 +220,12 @@ summary(bprs_long)
 head(bprs_long)
 ```
 
-BPRS data include multiple measurements from 40 subjects. As the data is transformed from a wide to long format by time (measurements), each time point forms an observation and, thus, every participant has as many observations as there are measurements. Note that the numbering of the subjects/participants goes from 1 to 20 in both treatment groups, which is why I added a new id-variable into the data which goes from 1 to 40 identifying each participants. In the long form there are 360 observations of 5 variables, which are:
+BPRS data includes multiple measurements from 40 subjects. As the data is transformed from wide to long format by time (measurements), each time point forms an observation and, thus, every participant has as many observations as there are measurements. Note that the numbering of the subjects/participants goes from 1 to 20 in both treatment groups, which is why I have created a new id-variable into the data which goes from 1 to 40 identifying each participants ([see the R-Script for the coding of id-variable](https://github.com/Kuukkelipyy/IODS-project/blob/master/data/meet_and_repeat.R)). In the long form there are 360 observations of 5 variables, which are:
 
 - treatment: the treatment groups 1 and 2
 - subject: the id of participant in given treatment group (both groups have subjects from 1 to 20)
-- id: unique identifyier of participant
-- bprs: results of the measurement
+- id: unique id of the participants
+- bprs: results of the measurements
 - week: time point (weeks) of the measurements
 
 NB: The variable 'weeks' is removed from the data set as its information is already included in the 'week' variable and thus there is no use for it. In addition, subject and treatment variables are transformed to factors.
@@ -239,14 +239,15 @@ Let's first take brief graphical examination of the data! I'll begin by plotting
 ggplot(bprs_long, aes(x = week, y = bprs, group = id, col = treatment)) + 
   geom_text(aes(label = treatment)) + 
   scale_x_continuous(name = "Time (week)", breaks = seq(0, 11, 1)) + 
+  scale_colour_discrete(labels = c("Group 1", "Group 2")) +
   scale_y_continuous(name = "BPRS") + 
   theme_bw() + 
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  ggtitle("Plot of BPRS-scores over time. The treatment groups are identified by numbers and colors")
+  ggtitle("Plot of BPRS-scores over time.\nThe treatment groups are identified by numbers and colors")
 
 ```
 
-Next, I will take the longitudinal nature of the data into account and draw plot of individual BPRS profiles. The individual profiles show similar downward trend in the BPRS scores over time, although in the group 2 there seem to be more departures from this trend.
+Next, I will take the longitudinal nature of the data into account and draw a plot of individual BPRS profiles. The individual profiles show similar downward trend in the BPRS scores over time, although in the group 2 there seem to be more departures from this trend.
 
 The next figure, that is the scatter plot matrix, demonstrates that the repeated measures of BPRS are not independent of one another, which is no surprise when considering the longitudinal nature of the data.
 
@@ -267,7 +268,7 @@ pairs(bprs_wide[, 3:11], cex = 0.7)
 
 ### 6.2.3 Regression modeling
 
-Now I will move to a more formal analyses and fit a linear regression model including BPRS scores as the response variable and two explanatory variables, namely time and treatment group. Note: the repeated-measures structure of the data is ignored in this model. The results (see below) show that estimate of time is statistical significant (p < 0.001), meaning that the BPRS scores decrease over time. However, the regression coefficient of treatment group is not significant indicating that the BPRS scores do not differ between the groups conditional on time.
+Now I'll fit a linear regression model in which the BPRS is the response variable and time and treatment are the explanatory variables. It should be noted, that in this independent model the repeated-measures structure of the data is ignored. According to the results (see below) the estimate of time is statistical significant (p < 0.001), meaning that the BPRS scores decrease over time conditional on treatment group. However, the regression coefficient of treatment group is not significant indicating that the BPRS scores do not differ between the groups conditional on time.
 
 ```{r message=FALSE, warning=FALSE}
 
@@ -298,9 +299,11 @@ summary(bprs_rim1)
 
 ```
 
-The results from the random intercept model are presented above. The estimates of time (i.e. week) and treatment group are quite similar to those from the previous model; the estimate of time is statistically significant, while the treatment group is not. The estimated variance of the participant (id) random effects are pretty large (97.39), which indicate considerable variation in the intercepts of the regression fits of the individual BPRS profiles. Thus, I will next fit a random intercept and random slope model, which allows the linear regression fits for each individual to differ in slope as well. This way it is possible to detect the individual differences in the participants' BPRS profiles, and also the effect of time.
+The results from the random intercept model are presented above. The estimates of time (i.e. week) and treatment group are quite similar to those from the previous model; the estimate of time is statistically significant, while the treatment group is not. Interpretation is same as above, that the results suggest that the BPRS scores decrease by time conditional on treatment group.
 
-Note that even though the significance of the results or coefficient of the mixed effect models is commented multiple times in the chapter 9, there are no p-values or explanations how to interpret the significance of the results, which I found very annoying. Here, I installed _lmerTest_-package which adds p-values to the lrm-summary tables.
+The estimated variance of the participant (id) random effects is pretty large (97.39), which indicates considerable variation in the intercepts of the regression fits of the individual BPRS profiles. Thus, I will next fit a random intercept and random slope model, which allows the linear regression fits for each individual to differ in slope as well. This way it is possible to detect the individual differences in the participants' BPRS profiles, and also the effect of time.
+
+Note that even though the significance of the results or coefficient of the mixed effect models is commented multiple times in the chapter 9 of MABS, there are no p-values or explanations how to interpret the significance of the results, which I found very annoying. Here, I installed _lmerTest_-package which adds p-values to the lrm-summary tables.
 
 ```{r message=FALSE, warning=FALSE}
 
@@ -315,12 +318,11 @@ anova(bprs_rim1, bprs_rim2)
 
 ``` 
 
-The results from the random intercept and random slope model are presented above. The fixed effect estimate of time (i.e. week) is the same as in the random intercept model, but the fixed effect estimate of treatment group is bigger suggesting the difference between the treatment groups is larger.
+The results from the random intercept and random slope model are presented above. The fixed effect estimate of time (i.e. week) is the same as in the random intercept model, but the fixed effect estimate of treatment group is larger, suggesting bigger difference in the BPRS scores between the groups. However, as can be seen from the summary table, the estimate of treatment is not statistically significant, while estimate of time is.
 
 The likelihood ratio test for the two models gives a chi-squared statistic of 66.66 with 2 degrees of freedom, and the associated p-value is really small (p < 0.001), meaning that the random intercept and slope model provides a better fit for the data.
 
-Finally, I fit a random intercept and slope model that allows a interaction between treatment group and time. The results from this model are shown below. The results differ somewhat from the previous model, but more importantly the likelihood ratio test for the random intercept and slope model versus the random intercept and
-slope model with interaction term shows that the latter provides worse fit for the data, and thus the results are not interpret here any further.
+Finally, I fit a random intercept and slope model that allows an interaction between the treatment group and time. The results from this model are shown below. The results differ somewhat from the previous model, but more importantly the likelihood ratio test for the random intercept and slope model versus the random intercept and slope model with interaction term shows that the latter provides worse fit for the data, and thus the results are not interpret here any further.
 
 ```{r message=FALSE, warning=FALSE}
 
@@ -333,7 +335,7 @@ anova(bprs_rim2, bprs_rim3)
 
 ```
 
-The very last thing to do is to draw one more figure which shows the observed and fitted BPRS profiles. Based on the above presented results I will use the random intercept and slope model without interaction term for fitted values. The two figures are presented below. They illustrate how well the model fits the observed data. Model seems to fit somewhat roughly and there are also quite big differences between the observed and fitted lines, but everyone can take a look and make a judgement of their own.
+The very last thing to do is to draw one more figure which shows the observed and fitted BPRS profiles. Based on the above presented results I will use the random intercept and slope model without interaction term for fitting values. The two figures are presented below. They illustrate how well the model fits the observed data. Model seems to fit somewhat roughly and there are also quite big differences between the observed and fitted lines, but everyone can take a look and make a judgement of their own.
 
 ```{r message=FALSE, warning=FALSE}
 
