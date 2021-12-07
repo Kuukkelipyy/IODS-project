@@ -1,7 +1,7 @@
 ################################################################################
 
 # Hans Hämäläinen
-# 27.11.2021
+# 7.12.2021
 
 # Introduction to Open Data Science 2021:
 ## RStudio Exercise 6: Data wrangling
@@ -17,7 +17,7 @@ library(tidyr)
 
 # BPRS DATA
 
-# download the data sets in wide format
+# download the data set in wide format
 bprs <- read.table("https://raw.githubusercontent.com/KimmoVehkalahti/MABS/master/Examples/data/BPRS.txt", header = TRUE)
 
 # let's have quick look at the data
@@ -33,7 +33,7 @@ bprs$treatment <- factor(bprs$treatment)
 bprs$subject <- factor(bprs$subject)
 
 # I will create a new 'id' variable in the data set so that each subject has unique ID
-## this is because I do not understand how I could implement the analysis otherwise
+## this is because there must be unique id to conduct longitudinal/within-individual analysis
 bprs$id <- seq.int(nrow(bprs))
 
 # save the data in wide format
@@ -52,7 +52,7 @@ str(bprs_long)
 glimpse(bprs_long)
 glimpse(bprs)
 ## wide: every subject in a treatment group is one observation with multiple measurements over time (i.e. variables/columns; weeks)
-## long: every measurement is observation; every subject in a treatment group has total of 9 observations (one for every week/measurement)
+## long: every measurement is an observation; every subject in a treatment group has total of 9 observations (one for every week/measurement)
 ## thus, in wide format the data consists of 40 rows/observations and 11 variables
 ## and in long format 360 rows/observations (40 participants * 9 measurements) of 5 observations (of which 'weeks is the old varible of measurements, and its information is now split into 'week' and 'bprs' variables)
 
@@ -108,6 +108,6 @@ write.table(rats_long, "data/rats_long.csv", sep = ";")
 
 ################################################################################
 ################################################################################
-######################### THAT'S ALL DOCS! #####################################
+########################### THAT'S ALL DOCS! ###################################
 ################################################################################
 ################################################################################

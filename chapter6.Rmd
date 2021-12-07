@@ -35,7 +35,7 @@ rats_long <- read.table("data/rats_long.csv", sep = ";")
 ## remove WD variable 
 ## Group and ID -> factors
 rats_long <- rats_long %>%
-  select(-WD) %>%
+  dplyr::select(-WD) %>%
   mutate(Group = as.factor(Group),
          ID = as.factor(ID))
 
@@ -46,7 +46,7 @@ glimpse(rats_long)
 
 ### 6.1.2 Graphical examination of the group based differences
 
-First, I draw a plot for every observed rat; the plot shows measured weight (y-axis) over time (x-axis) for every rat (lines). Rats in every group have gained weight during the experiment, although the growth seems to be bigger in groups 2 and 3 compared to group 1. However, the plot also illustrates that in the beginning of the experiment (time 0) the rats differ from each other in terms of the weight and bigger rats are bigger throughout the experiment. Rats in group 1 are much smaller than those in the groups 2 and 3. Also there is one much bigger individual in the group 2. 
+First, I draw a plot for every observed rat; the plot shows measured weight (y-axis) over time (x-axis) for every rat (lines). Rats in every group have gained weight during the experiment, although the growth seems to be bigger in groups 2 and 3 compared to group 1. However, the plot also illustrates that in the beginning of the experiment (time 1) the rats differ from each other in terms of the weight and bigger rats are bigger throughout the experiment. Rats in group 1 are much smaller than those in the groups 2 and 3. Also there is one much bigger individual in the group 2. 
 
 ```{r message=FALSE, warning=FALSE}
 
@@ -91,9 +91,8 @@ To get a better picture of the weight gain and the differences between the group
 
 # Summary data with mean and standard error of weight by treatment group and time
 
-# PROBLEM: DIFFRENT NUMBER OF RATS IN DIFFERENT GROUPS!
-## how to take sqrt(n), where n = number of rats in group -> 
-### n() which gives the current group size ??
+# Note: DIFFRENT NUMBER OF RATS IN DIFFERENT GROUPS!
+## use function n() inside sqrt(); n() gives the current group size
 rats_long_s <- rats_long %>%
   group_by(Group, Time) %>%
   summarise(mean = mean(Weight), se = sd(Weight) /  sqrt(n())) %>%
@@ -116,7 +115,7 @@ ggplot(rats_long, aes(x = as.factor(Time), y = Weight, fill = Group)) +
   geom_boxplot(position = position_dodge(width = 0.9)) +
   theme_bw() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   theme(legend.position = c(0.9,0.4)) +
-  scale_x_discrete(name = "Time (days") +
+  scale_x_discrete(name = "Time (days)") +
   ggtitle("Boxplots for the RATS data: weight over time")
 
 
@@ -141,7 +140,7 @@ ggplot(rats_summary, aes(x = Group, y = mean)) +
 
 ```
 
-The box plots presented above shows again that the groups differ from each other and also that every group has an outlier, although only in the case of group two the outlier is quite far from the others. Thus, I will remove the outlier of group 2 and draw the box plots again. After removing the outlier, the differences between groups are even clearer as can be seen in the picture below. 
+The box plots presented above shows again that the groups differ from each other and also that every group has an outlier, although only in the case of group two the outlier is quite far from the others. Thus, I will remove the outlier of group 2 and draw the box plots again. After removing the outlier, the differences between the groups are even clearer as can be seen in the picture below. 
 
 ```{r message=FALSE, warning=FALSE}
 rats_summary_filt <- rats_summary %>%
@@ -191,7 +190,7 @@ anova(fit)
 
 ```
 
-When taking the baseline into account results are quite different! According to the above presented results from the linear regression model, the coefficient of group 2 or 3 are not statistically significant (when considering p < 0.05 as the threshold). Analysis of variance provides similar results, indicating that the differences between the groups are not statistically significant when taking the baseline into account. Although, naturally these are only preliminary results and, for instance, the longitudinal structure of the data is ignored. More sophisticated and proper analysis of the data can be found in the chapter 9 of MABS. 
+When taking the baseline into account results are quite different! According to the above presented results from the linear regression model, the coefficient of group 2 or 3 are not statistically significant (when considering p < 0.05 as the threshold). Analysis of variance provides similar results, indicating that the difference between the groups is not statistically significant when taking the baseline into account. Although, naturally these are only preliminary results and, for instance, the longitudinal structure of the data is ignored. More sophisticated and proper analysis of the data can be found in the chapter 9 of MABS. 
 
 ## 6.2 BPRS
 
@@ -210,7 +209,7 @@ bprs_long <- read.table("data/bprs_long.csv", sep = ";")
 ## remove WD variable 
 ## Group and ID -> factors
 bprs_long <- bprs_long%>%
-  select(-weeks) %>%
+  dplyr::select(-weeks) %>%
   mutate(treatment = as.factor(treatment),
          subject = as.factor(subject),
          id = as.factor(id))
@@ -299,11 +298,13 @@ summary(bprs_rim1)
 
 ```
 
-The results from the random intercept model are presented above. The estimates of time (i.e. week) and treatment group are quite similar to those from the previous model; the estimate of time is statistically significant, while the treatment group is not. Interpretation is same as above, that the results suggest that the BPRS scores decrease by time conditional on treatment group.
+The results from the random intercept model are presented above. The estimates of time (i.e. week) and treatment group are quite similar to those from the previous model. The p-value of the time's estimate is statistically significant, while in the case of treatment group it is not. The magnitudes of the t-values provide similar evidence as the magnitude of week's t-value (-15.1) is quite large, while the magnitude of treatment's t-value (0.2) is really small (see Note 1 below). Interpretation is the same as above, that the results suggest that the BPRS scores decrease by time conditional on treatment.
 
 The estimated variance of the participant (id) random effects is pretty large (97.39), which indicates considerable variation in the intercepts of the regression fits of the individual BPRS profiles. Thus, I will next fit a random intercept and random slope model, which allows the linear regression fits for each individual to differ in slope as well. This way it is possible to detect the individual differences in the participants' BPRS profiles, and also the effect of time.
 
-Note that even though the significance of the results or coefficient of the mixed effect models is commented multiple times in the chapter 9 of MABS, there are no p-values or explanations how to interpret the significance of the results, which I found very annoying. Here, I installed _lmerTest_-package which adds p-values to the lrm-summary tables.
+**_Note 1:_** The greater is the magnitude of t-value, the greater is the evidence against the null hypothesis, that is: the greater evidence that there is a significant difference. Respectively, the closer t is to 0, the more likely there is not a statistically significant difference.
+
+**_Note 2:_** Even though the significance of the results or coefficients of the mixed effect models is commented multiple times in the chapter 9 of MABS, there are no p-values or explanations how to interpret the significance of the results from the t-values, which I found a bit annoying. Here, I installed _lmerTest_-package which adds p-values to the lrm-summary tables.
 
 ```{r message=FALSE, warning=FALSE}
 
@@ -318,7 +319,7 @@ anova(bprs_rim1, bprs_rim2)
 
 ``` 
 
-The results from the random intercept and random slope model are presented above. The fixed effect estimate of time (i.e. week) is the same as in the random intercept model, but the fixed effect estimate of treatment group is larger, suggesting bigger difference in the BPRS scores between the groups. However, as can be seen from the summary table, the estimate of treatment is not statistically significant, while estimate of time is.
+The results from the random intercept and random slope model are presented above. The fixed effect estimate of time (i.e. week) is the same as in the random intercept model, but the fixed effect estimate of treatment group is larger, suggesting bigger difference in the BPRS scores between the groups. However, as can be seen from the summary table, according to the p-values the estimate of treatment is not statistically significant, while estimate of time is and the t-values provide similar evidence.
 
 The likelihood ratio test for the two models gives a chi-squared statistic of 66.66 with 2 degrees of freedom, and the associated p-value is really small (p < 0.001), meaning that the random intercept and slope model provides a better fit for the data.
 
